@@ -1,0 +1,115 @@
+﻿<div >
+        <div class="row">
+<div class="card mt-1 l-1 col-4">
+    <div    class="card-header">
+        <div class="row" style="margin-bottom: 5px;">
+                <h5 class="primary col-6" style="padding-left: 0;">Topic List</h5>
+                <button class="btn btn-outline-primary col-2" (click)="activeIds=[]" ngbPopover="Collapse All" triggers="mouseenter:mouseleave"><fa-icon [icon]="faChevronUp" ></fa-icon></button>
+                <button class="btn btn-outline-primary l-1 ml-1 col-2" ngbPopover="Refresh" triggers="mouseenter:mouseleave" (click)="getTopics()"><fa-icon [icon]="faSyncAlt" ></fa-icon></button>
+                         
+        </div>
+        <div class="row">
+                <input type="search" class="form-control ds-input" id="search-topic" placeholder="Search..." aria-label="Search for..." autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-owns="algolia-autocomplete-listbox-0" dir="auto" style="position: relative; vertical-align: top;" [(ngModel)]="topicSearch">
+        </div>
+    </div>
+    <div *ngIf="loading" class="d-flex align-items-center" style="padding: 20px;">
+            <strong>Loading...</strong>
+            <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+          </div>
+    <ngb-accordion #acc="ngbAccordion" [activeIds]="activeIds">
+            <ngb-panel title="{{topic.name}}" *ngFor="let topic of topicSearchAction()">
+              <ng-template ngbPanelContent>
+                    <ul class="list-group" *ngFor="let item of [].constructor(topic.partitionCount); let i = index">
+                            <button type="button" (click)="getMessages(topic.name, i, maxMessages)" class="btn btn-outline-secondary">partition-{{i}}</button>
+                    </ul>
+              </ng-template>
+            </ngb-panel>
+    </ngb-accordion>
+</div>
+
+<div class="card mt-1 l-1 col-8">
+        <div class="card-header">
+                <h5 class="primary l-0" *ngIf="!currentTopic" style="padding-left: 0;">Click on a Topic and Partition to see Messages </h5>
+                <h5 class="primary" *ngIf="currentTopic" style="padding-left: 0;">Contents of {{currentTopic}} partition-{{currentPartition}}</h5>
+                
+        
+        <div >
+                
+                <div class="form-group row" >
+                        <label for="maxMessages" class="col-sm-2 mt-0 l-0 col-form-label">Max Messages</label>
+                        <div class="col-sm-2">
+                                <input class="form-control" type="number" id="maxMessages"
+                                    [(ngModel)]="maxMessages"/>
+                        </div>
+                        <button class="btn btn-primary l-1 mr-1 col-sm-1" *ngIf="maxMessages!=originalMaxMessages" (click)="originalMaxMessages=maxMessages;getMessages(currentTopic, currentPartition, maxMessages)">Set</button>
+                        <button class="btn btn-outline-secondary l-1 mr-1 col-sm-1" *ngIf="maxMessages!=originalMaxMessages" (click)="maxMessages=originalMaxMessages">Reset</button>
+                        
+                        <button class="btn btn-outline-primary l-1 ml-1 col-sm-1" ngbPopover="Refresh" triggers="mouseenter:mouseleave" (click)="getMessages(currentTopic, currentPartition, maxMessages)"><fa-icon [icon]="faSyncAlt" ></fa-icon></button>
+                        <input type="search" class="form-control ds-input l-1 ml-1 col-sm-2" id="search-messages" placeholder="Search..." aria-label="Search for messages..." autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-owns="algolia-autocomplete-listbox-0" dir="auto" 
+                             [(ngModel)]="messageSearch">
+    
+                </div>
+                
+        </div>
+        </div>    
+        
+        
+        
+           <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th class="offset" scope="col">Offset</th>
+                    <th scope="col">Key</th>
+                    <th scope="col">Value</th>
+                  </tr>
+                </thead>
+                
+                <tbody >
+                    
+                    <div *ngIf="messageLoading" class="d-flex align-items-center" style="padding: 20px;">
+                            <strong>Loading...</strong>
+                            <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                          </div>
+                    <tr *ngIf="!messageLoading && (messages==null ||messages.length==0)">
+                       <td colspan="3" style="text-align: center;">No Messages found</td>     
+                    </tr>
+                        
+                        <tr *ngFor="let message of messageSearchAction()">
+                                <th class="offset" scope="row">{{message.offset}}</th>
+                                <td>{{message.key?message.key.substring(0,49):'null'}} <fa-icon *ngIf="message.key && message.key.length>50" [icon]="faEllipsisH" (click)="open(content,'key', message.key)"></fa-icon></td>
+                                
+                                <td>{{message.value?message.value.substring(0,49):'null'}} <fa-icon *ngIf="message.key && message.key.length>50" [icon]="faEllipsisH" (click)="open(content,'key', message.key)"></fa-icon></td>
+                        </tr>
+                </tbody>
+        
+        </table>
+        <div class="d-flex justify-content-between p-2">
+                <ngb-pagination [collectionSize]="messagesSize" [(page)]="page" [pageSize]="pageSize" maxSize="10">
+                </ngb-pagination>
+              
+                <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
+                  <option [ngValue]="10">10 items per page</option>
+                  <option [ngValue]="20">20 items per page</option>
+                  <option [ngValue]="100">100 items per page</option>
+                </select>
+              </div>
+</div>
+</div>
+
+<ng-template #content let-modal>
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-basic-title">Message {{type}}</h4>
+          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+                {{data}}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+        </div>
+</ng-template>
+      
+
+</div>

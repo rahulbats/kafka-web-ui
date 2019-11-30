@@ -16,6 +16,9 @@
             <strong>Loading...</strong>
             <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
           </div>
+    <div *ngIf="topicError" class="alert alert-danger" role="alert">
+                {{topicError}}
+    </div>      
     <ngb-accordion #acc="ngbAccordion" [activeIds]="activeIds">
             <ngb-panel title="{{topic.name}}" *ngFor="let topic of topicSearchAction()">
               <ng-template ngbPanelContent>
@@ -70,15 +73,18 @@
                             <strong>Loading...</strong>
                             <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
                           </div>
+                    <div *ngIf="messageError" class="alert alert-danger" role="alert">
+                                        {{messageError}}
+                    </div>           
                     <tr *ngIf="!messageLoading && (messages==null ||messages.length==0)">
                        <td colspan="3" style="text-align: center;">No Messages found</td>     
                     </tr>
                         
                         <tr *ngFor="let message of messageSearchAction()">
                                 <th class="offset" scope="row">{{message.offset}}</th>
-                                <td>{{message.key?message.key.substring(0,49):'null'}} <fa-icon *ngIf="message.key && message.key.length>50" [icon]="faEllipsisH" (click)="open(content,'key', message.key)"></fa-icon></td>
+                                <td>{{message.key?message.key.substring(0,49):'null'}} <a href="#" *ngIf="message.key && message.key.length>50"  (click)="open(content,'key', message.key)">...</a></td>
                                 
-                                <td>{{message.value?message.value.substring(0,49):'null'}} <fa-icon *ngIf="message.key && message.key.length>50" [icon]="faEllipsisH" (click)="open(content,'key', message.key)"></fa-icon></td>
+                                <td>{{message.value?message.value.substring(0,49):'null'}} <a href="#" *ngIf="message.value && message.value.length>50" (click)="open(content,'key', message.key)">...</a></td>
                         </tr>
                 </tbody>
         
@@ -96,20 +102,7 @@
 </div>
 </div>
 
-<ng-template #content let-modal>
-        <div class="modal-header">
-          <h4 class="modal-title" id="modal-basic-title">Message {{type}}</h4>
-          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-                {{data}}
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
-        </div>
-</ng-template>
+
       
 
 </div>

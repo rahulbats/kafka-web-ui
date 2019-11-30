@@ -3,8 +3,13 @@
     <a class="navbar-brand" href="#">Kafka Web UI</a>
     <div class="navbar-nav">
         <a class="nav-item nav-link" routerLink="/">Home</a>
-        <a class="nav-item nav-link" (click)="logout()">Logout</a>
+        
     </div>
+    <ul class="navbar-nav ml-auto">
+            <span class="navbar-brand">Welcome <strong>{{currentUser.username}}</strong></span>
+            <a class="nav-item nav-link" (click)="logout()">Logout</a>
+    </ul>
+    
 </nav>
 
 <!-- main app container -->

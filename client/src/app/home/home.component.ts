@@ -7,6 +7,7 @@ import { MessageService } from '@app/_services/message.service';
 import { faEllipsisH, faSyncAlt, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
 import {NgbModal, ModalDismissReasons, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
+import { ModalContentComponent } from '../modal-content/modal-content.component';
 
 @Component({ templateUrl: 'home.component.html' })
 export class HomeComponent {
@@ -28,8 +29,8 @@ export class HomeComponent {
     page = 1;
     pageSize = 10;
     messagesSize = this.messages.length;
-    
-
+    topicError=null;
+    messageError=null;
     constructor(private topicsService: TopicsService, private messageService:MessageService, private modalService: NgbModal) { }
 
     ngOnInit() {
@@ -37,29 +38,45 @@ export class HomeComponent {
         this.getTopics();
     }
     getTopics(){
+        this.topicError=null;
         this.loading = true;
         this.topics = [];
-        this.topicsService.getAll().pipe(first()).subscribe(topics => {
-            this.loading = false;
-            this.topics = topics;
-        });
+        this.topicsService.getAll()
+            .pipe(first())
+            .subscribe(
+                topics => {
+                    this.loading = false;
+                    this.topics = topics;
+                },
+                error=> {
+                    this.loading = false;
+                    this.topicError= error;
+                }
+                );
     }
     getMessages(topic: string, partition: number, maxMessages: number) {
         this.messages = [];
+        this.messageError = null;
         this.currentTopic = topic;
         this.currentPartition = partition;
         window.scrollTo(0, 0);
         this.messageLoading = true;
         this.messageService.
             getMessages(topic, partition, maxMessages)
-            .pipe(first()).subscribe(messages => {
-            this.messageLoading = false;
-            this.messages = messages;
-            console.log(messages);
-        });
+            .pipe(first())
+            .subscribe(
+                messages => {
+                    this.messageLoading = false;
+                    this.messages = messages;
+                },
+                error=> {
+                    this.messageLoading = false;
+                    this.messageError= error;
+                }
+                );
     }
     open(content, type, value) {
-        const modalRef: NgbModalRef  = this.modalService.open(content);
+        const modalRef: NgbModalRef  = this.modalService.open(ModalContentComponent);
         modalRef.componentInstance.data=value;
         modalRef.componentInstance.type=type;
         modalRef.result.then((result) => {

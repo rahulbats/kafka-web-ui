@@ -14,7 +14,8 @@ import { JwtInterceptor, ErrorInterceptor } from './_helpers';
 import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';;
+import { ModalContentComponent } from './modal-content/modal-content.component'
 @NgModule({
     imports: [
         BrowserModule,
@@ -28,8 +29,8 @@ import { FormsModule } from '@angular/forms';
     declarations: [
         AppComponent,
         HomeComponent,
-        LoginComponent
-    ],
+        LoginComponent,
+        ModalContentComponent    ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
@@ -37,6 +38,7 @@ import { FormsModule } from '@angular/forms';
         // provider used to create fake backend
         //fakeBackendProvider
     ],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    entryComponents: [ ModalContentComponent ]
 })
 export class AppModule { }

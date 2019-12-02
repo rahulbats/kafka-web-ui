@@ -1,5 +1,12 @@
-# angular-8-jwt-authentication-example
+# Kafka Web UI - A Web UI for Kafka messages using SASL accounts as login
 
-Angular 8 - JWT Authentication Example with the Angular CLI
 
-To see a demo and further details go to https://jasonwatmore.com/post/2019/06/22/angular-8-jwt-authentication-example-tutorial
+## Client
+This is the javascript web client for Kafka Web UI.
+To build use `ng build  --base-href /api/ui/ --prod`
+This puts the build pages inside the server's resources directory.
+You can then run run gradle build using `gradle build` inside the server directory.
+
+For development run `ng serve --proxy-config proxy.config.json`
+
+

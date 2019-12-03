@@ -3,7 +3,7 @@
 
 ## Client
 This is the javascript web client for Kafka Web UI.
-To build use `ng build  --base-href /api/ui/ --prod`
+To build use `ng build  --base-href /api/dist/ --prod`
 This puts the build pages inside the server's resources directory.
 You can then run run gradle build using `gradle build` inside the server directory.
 

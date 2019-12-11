@@ -84,7 +84,7 @@
                                 <th class="offset" scope="row">{{message.offset}}</th>
                                 <td>{{message.key?message.key.substring(0,49):'null'}} <a href="#" *ngIf="message.key && message.key.length>50"  (click)="open(content,'key', message.key)">...</a></td>
                                 
-                                <td>{{message.value?message.value.substring(0,49):'null'}} <a href="#" *ngIf="message.value && message.value.length>50" (click)="open(content,'key', message.key)">...</a></td>
+                                <td>{{message.value?message.value.substring(0,49):'null'}} <a href="#" *ngIf="message.value && message.value.length>50" (click)="open(content,'value', message.value)">...</a></td>
                         </tr>
                 </tbody>
         

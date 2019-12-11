@@ -40,6 +40,9 @@ public class KafkaMessageService {
     @Value("${ssl.truststore.password}")
     private String truststorePassword;
 
+    @Value("${ssl.truststore.credentials}")
+    private String truststoreCredentials;
+
     @Value("${ssl.keystore.password}")
     private String keystorePassword;
 
@@ -88,6 +91,8 @@ public class KafkaMessageService {
                 "org.apache.kafka.common.security.plain.PlainLoginModule required  username=\""+username+"\"  password=\""+password+"\";":
                 "org.apache.kafka.common.security.scram.ScramLoginModule required  username=\""+username+"\"  password=\""+password+"\";";
 
+
+
         Properties props = new Properties();
         props.put("bootstrap.servers", bootstrap_servers);
         props.put("group.id", "kafka-ui-consumer-group");
@@ -103,6 +108,8 @@ public class KafkaMessageService {
             props.put("ssl.keystore.location", keystoreLocation);
         if(truststorePassword!=null)
             props.put("ssl.truststore.password", truststorePassword);
+        if(truststoreCredentials!=null)
+            props.put("ssl.truststore.credentials", truststoreCredentials);
         if(keystorePassword!=null)
             props.put("ssl.keystore.password", keystorePassword);
         if(keyPassword!=null)

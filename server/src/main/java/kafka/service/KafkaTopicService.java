@@ -21,16 +21,55 @@ public class KafkaTopicService {
     @Value("${bootstrap_servers}")
     private String bootstrap_servers;
 
+
+    @Value("${ssl.truststore.location}")
+    private String truststoreLocation;
+
+    @Value("${ssl.keystore.location}")
+    private String keystoreLocation;
+
+    @Value("${ssl.truststore.password}")
+    private String truststorePassword;
+
+    @Value("${ssl.truststore.credentials}")
+    private String truststoreCredentials;
+
+    @Value("${ssl.keystore.password}")
+    private String keystorePassword;
+
+    @Value("${ssl.key.password}")
+    private String keyPassword;
+
+    @Value("${sasl.mechanism}")
+    private String saslMechanism;
+
     public List<Topic> listTopics(String username, String password) throws KafkaException{
         Map<String, List<PartitionInfo>> topics;
 
+        String jaasString = saslMechanism.equals("PLAIN")?
+                "org.apache.kafka.common.security.plain.PlainLoginModule required  username=\""+username+"\"  password=\""+password+"\";":
+                "org.apache.kafka.common.security.scram.ScramLoginModule required  username=\""+username+"\"  password=\""+password+"\";";
+
+
+
         Properties props = new Properties();
         props.put("bootstrap.servers", bootstrap_servers);
-        props.put("group.id", "test-consumer-group");
+        props.put("group.id", "kafka-ui-consumer-group");
         props.put("security.protocol", security_protocol);
-        props.put("sasl.mechanism","PLAIN");
-        props.put("group.id", "test-consumer-group");
-        props.put("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required  username=\""+username+"\"  password=\""+password+"\";");
+        props.put("sasl.mechanism",saslMechanism);
+        props.put("sasl.jaas.config",jaasString);
+        if(truststoreLocation!=null)
+            props.put("ssl.truststore.location", truststoreLocation);
+        if(keystoreLocation!=null)
+            props.put("ssl.keystore.location", keystoreLocation);
+        if(truststorePassword!=null)
+            props.put("ssl.truststore.password", truststorePassword);
+        if(truststoreCredentials!=null)
+            props.put("ssl.truststore.credentials", truststoreCredentials);
+        if(keystorePassword!=null)
+            props.put("ssl.keystore.password", keystorePassword);
+        if(keyPassword!=null)
+            props.put("ssl.key.password", keyPassword);
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 

@@ -4,9 +4,9 @@ import { first } from 'rxjs/operators';
 import { Topic, Message } from '@app/_models';
 import { TopicsService, AuthenticationService } from '@app/_services';
 import { MessageService } from '@app/_services/message.service';
-import { faEllipsisH, faSyncAlt, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisH, faSyncAlt, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
-import {NgbModal, ModalDismissReasons, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, ModalDismissReasons, NgbModalRef, NgbPanelChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import { ModalContentComponent } from '../modal-content/modal-content.component';
 
 @Component({ templateUrl: 'home.component.html' })
@@ -16,12 +16,13 @@ export class HomeComponent {
     faEllipsisH = faEllipsisH;
     faSyncAlt = faSyncAlt;
     faChevronUp = faChevronUp;
+    faChevronDown = faChevronDown;
+    panelIcon = faChevronDown;
     closeResult: string;
     topics: Topic[];
     currentTopic: string;
     currentPartition: number;
     messages: Message[]=[]; 
-    activeIds: string[] = [];
     topicSearch: string = ''; 
     messageSearch: string = '';
     maxMessages: number = 100;
@@ -54,6 +55,7 @@ export class HomeComponent {
                 }
                 );
     }
+   
     getMessages(topic: string, partition: number, maxMessages: number) {
         this.messages = [];
         this.messageError = null;

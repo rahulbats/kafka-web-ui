@@ -1,10 +1,10 @@
 ﻿<div >
         <div class="row">
-<div class="card mt-1 l-1 col-4">
+<div class="card mt-1 l-1 col-4" style="padding: 0 0">
     <div    class="card-header">
         <div class="row" style="margin-bottom: 5px;">
                 <h5 class="primary col-6" style="padding-left: 0;">Topic List</h5>
-                <button class="btn btn-outline-primary col-2" (click)="activeIds=[]" ngbPopover="Collapse All" triggers="mouseenter:mouseleave"><fa-icon [icon]="faChevronUp" ></fa-icon></button>
+                <button class="btn btn-outline-primary col-2" *ngIf="acc.activeIds.length>0" (click)="acc.activeIds=[]" ngbPopover="Collapse All" triggers="mouseenter:mouseleave"><fa-icon [icon]="faChevronUp" ></fa-icon></button>
                 <button class="btn btn-outline-primary l-1 ml-1 col-2" ngbPopover="Refresh" triggers="mouseenter:mouseleave" (click)="getTopics()"><fa-icon [icon]="faSyncAlt" ></fa-icon></button>
                          
         </div>
@@ -19,9 +19,19 @@
     <div *ngIf="topicError" class="alert alert-danger" role="alert">
                 {{topicError}}
     </div>      
-    <ngb-accordion #acc="ngbAccordion" [activeIds]="activeIds">
-            <ngb-panel title="{{topic.name}}" *ngFor="let topic of topicSearchAction()">
-              <ng-template ngbPanelContent>
+    <ngb-accordion #acc="ngbAccordion"  >
+            <ngb-panel id="{{topic.name}}" *ngFor="let topic of topicSearchAction()" >
+                <ng-template ngbPanelTitle>
+                        <span>{{topic.name}} 
+                                <fa-icon [icon]="faChevronDown" *ngIf="!acc.activeIds.includes(topic.name)"></fa-icon>
+                                <fa-icon [icon]="faChevronUp" *ngIf="acc.activeIds.includes(topic.name)"></fa-icon>
+                                
+                        </span>
+                        
+                </ng-template>
+                
+
+                <ng-template ngbPanelContent>
                     <ul class="list-group" *ngFor="let item of [].constructor(topic.partitionCount); let i = index">
                             <button type="button" (click)="getMessages(topic.name, i, maxMessages)" class="btn btn-outline-secondary">partition-{{i}}</button>
                     </ul>
@@ -30,8 +40,8 @@
     </ngb-accordion>
 </div>
 
-<div class="card mt-1 l-1 col-8">
-        <div class="card-header">
+<div class="card mt-1 l-1 col-8" style="padding: 0 0">
+        <div class="card-header" >
                 <h5 class="primary l-0" *ngIf="!currentTopic" style="padding-left: 0;">Click on a Topic and Partition to see Messages </h5>
                 <h5 class="primary" *ngIf="currentTopic" style="padding-left: 0;">Contents of {{currentTopic}} partition-{{currentPartition}}</h5>
                 

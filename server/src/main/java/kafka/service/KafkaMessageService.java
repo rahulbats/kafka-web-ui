@@ -4,6 +4,7 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import kafka.model.Message;
 import kafka.model.MessageType;
 import kafka.model.Topic;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.KafkaException;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,6 +54,8 @@ public class KafkaMessageService {
     @Value("${sasl.mechanism}")
     private String saslMechanism;
 
+    @Value("${schema.registry.basic.auth.user.info}")
+    private String srUserInfo;
 
 
     public List<Message> listMessages(String username, String password, String topic, int partition,
@@ -64,6 +68,8 @@ public class KafkaMessageService {
             URL url = new URL(schemaRegistryURL+"/subjects/"+topic+"-key/versions/");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
+            String encoded = Base64.getEncoder().encodeToString((srUserInfo).getBytes(StandardCharsets.UTF_8));  //Java 8
+            con.setRequestProperty("Authorization", "Basic "+encoded);
             int status = con.getResponseCode();
             if(status!=200)
                 keyType =  MessageType.valueOf("JSON");
@@ -78,6 +84,8 @@ public class KafkaMessageService {
             URL url = new URL(schemaRegistryURL+"/subjects/"+topic+"-value/versions/");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
+            String encoded = Base64.getEncoder().encodeToString((srUserInfo).getBytes(StandardCharsets.UTF_8));  //Java 8
+            con.setRequestProperty("Authorization", "Basic "+encoded);
             int status = con.getResponseCode();
             if(status!=200)
                 valueType =  MessageType.valueOf("JSON");
@@ -99,9 +107,12 @@ public class KafkaMessageService {
         props.put("security.protocol", security_protocol);
         props.put("sasl.mechanism",saslMechanism);
         props.put("sasl.jaas.config",jaasString);
-        props.put("key.deserializer", keyType==MessageType.JSON? "org.apache.kafka.common.serialization.StringDeserializer": KafkaAvroDeserializer.class.getName());
-        props.put("value.deserializer", valueType==MessageType.JSON? "org.apache.kafka.common.serialization.StringDeserializer": KafkaAvroDeserializer.class.getName());
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyType==MessageType.JSON? "org.apache.kafka.common.serialization.StringDeserializer": KafkaAvroDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueType==MessageType.JSON? "org.apache.kafka.common.serialization.StringDeserializer": KafkaAvroDeserializer.class);
         props.put("schema.registry.url", schemaRegistryURL);
+        props.put("basic.auth.credentials.source","USER_INFO");
+        props.put("basic.auth.user.info",srUserInfo);
+
         if(truststoreLocation!=null)
             props.put("ssl.truststore.location", truststoreLocation);
         if(keystoreLocation!=null)

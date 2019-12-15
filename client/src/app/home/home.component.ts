@@ -4,8 +4,7 @@ import { first } from 'rxjs/operators';
 import { Topic, Message } from '@app/_models';
 import { TopicsService, AuthenticationService } from '@app/_services';
 import { MessageService } from '@app/_services/message.service';
-import { faEllipsisH, faSyncAlt, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
-
+import { faEllipsisH, faSyncAlt , faPlus, faMinus} from '@fortawesome/free-solid-svg-icons';
 import {NgbModal, ModalDismissReasons, NgbModalRef, NgbPanelChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import { ModalContentComponent } from '../modal-content/modal-content.component';
 
@@ -15,9 +14,8 @@ export class HomeComponent {
     messageLoading = false;
     faEllipsisH = faEllipsisH;
     faSyncAlt = faSyncAlt;
-    faChevronUp = faChevronUp;
-    faChevronDown = faChevronDown;
-    panelIcon = faChevronDown;
+    faPlus = faPlus;
+    faMinus = faMinus;
     closeResult: string;
     topics: Topic[];
     currentTopic: string;

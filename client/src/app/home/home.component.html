@@ -4,7 +4,7 @@
     <div    class="card-header">
         <div class="row" style="margin-bottom: 5px;">
                 <h5 class="primary col-6" style="padding-left: 0;">Topic List</h5>
-                <button class="btn btn-outline-primary col-2" *ngIf="acc.activeIds.length>0" (click)="acc.activeIds=[]" ngbPopover="Collapse All" triggers="mouseenter:mouseleave"><fa-icon [icon]="faChevronUp" ></fa-icon></button>
+                <button class="btn btn-outline-primary col-2" *ngIf="acc.activeIds.length>0" (click)="acc.activeIds=[]" ngbPopover="Collapse All" triggers="mouseenter:mouseleave"><fa-icon  [icon]="faMinus" ></fa-icon></button>
                 <button class="btn btn-outline-primary l-1 ml-1 col-2" ngbPopover="Refresh" triggers="mouseenter:mouseleave" (click)="getTopics()"><fa-icon [icon]="faSyncAlt" ></fa-icon></button>
                          
         </div>
@@ -20,13 +20,13 @@
                 {{topicError}}
     </div>      
     <ngb-accordion #acc="ngbAccordion"  >
-            <ngb-panel id="{{topic.name}}" *ngFor="let topic of topicSearchAction()" >
+            <ngb-panel id="{{topic.name}}" *ngFor="let topic of topicSearchAction()">
                 <ng-template ngbPanelTitle>
-                        <span>{{topic.name}} 
-                                <fa-icon [icon]="faChevronDown" *ngIf="!acc.activeIds.includes(topic.name)"></fa-icon>
-                                <fa-icon [icon]="faChevronUp" *ngIf="acc.activeIds.includes(topic.name)"></fa-icon>
+                        <span style="float:left">{{topic.name}}</span>
+                                <fa-icon [icon]="faPlus" *ngIf="!acc.activeIds.includes(topic.name)" style="float: right;"></fa-icon>
+                                <fa-icon [icon]="faMinus" *ngIf="acc.activeIds.includes(topic.name)" style="float: right;"></fa-icon>
                                 
-                        </span>
+                        
                         
                 </ng-template>
                 

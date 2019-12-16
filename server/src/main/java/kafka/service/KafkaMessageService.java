@@ -4,12 +4,14 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import kafka.model.Message;
 import kafka.model.MessageType;
 import kafka.model.Topic;
+import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.record.Records;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class KafkaMessageService {
@@ -162,11 +165,16 @@ public class KafkaMessageService {
                             record.partition(), record.offset());*/
                     String key=null;
                     String value = null;
+                    List<String> headers = new ArrayList<>();
                     if(record.key()!=null)
                         key = record.key().toString();
                     if(record.value()!=null)
                         value = record.value().toString();
-                    messages.add(new Message(key, value, record.partition(), record.offset()));
+                    if(record.headers()!=null)
+                        headers =StreamSupport.stream(record.headers().spliterator(), false).map(header -> header.toString()).collect(Collectors.toList());
+
+
+                    messages.add(new Message(key, value, record.partition(), record.offset(), headers, record.timestamp(), record.timestampType().toString()));
                 });
 
                 break;

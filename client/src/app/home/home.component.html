@@ -1,6 +1,6 @@
 ﻿<div >
         <div class="row">
-<div class="card mt-1 l-1 col-4" style="padding: 0 0">
+<div class="card mt-1 l-1 col-3" style="padding: 0 0">
     <div    class="card-header">
         <div class="row" style="margin-bottom: 5px;">
                 <h5 class="primary col-6" style="padding-left: 0;">Topic List</h5>
@@ -20,12 +20,15 @@
                 {{topicError}}
     </div>      
     <ngb-accordion #acc="ngbAccordion"  >
-            <ngb-panel id="{{topic.name}}" *ngFor="let topic of topicSearchAction()">
-                <ng-template ngbPanelTitle>
-                        <span style="float:left">{{topic.name}}</span>
-                                <fa-icon [icon]="faPlus" *ngIf="!acc.activeIds.includes(topic.name)" style="float: right;"></fa-icon>
-                                <fa-icon [icon]="faMinus" *ngIf="acc.activeIds.includes(topic.name)" style="float: right;"></fa-icon>
-                                
+            <ngb-panel id="{{topic.name}}" *ngFor="let topic of topicSearchAction()" [type]="currentTopic==topic.name?'info':''">
+                <ng-template ngbPanelTitle >
+                        <div class="topic-name">
+                                        <span style="float:left">{{topic.name}}</span>
+                                        <fa-icon [icon]="faPlus" *ngIf="!acc.activeIds.includes(topic.name)" style="float: right;"></fa-icon>
+                                        <fa-icon [icon]="faMinus" *ngIf="acc.activeIds.includes(topic.name)" style="float: right;"></fa-icon>
+                                              
+                        </div>
+                            
                         
                         
                 </ng-template>
@@ -33,17 +36,19 @@
 
                 <ng-template ngbPanelContent>
                     <ul class="list-group" *ngFor="let item of [].constructor(topic.partitionCount); let i = index">
-                            <button type="button" (click)="getMessages(topic.name, i, maxMessages)" class="btn btn-outline-secondary">partition-{{i}}</button>
+                            <button type="button" (click)="getMessages(topic.name, i, maxMessages)" class="btn btn-outline-secondary" *ngIf="!(i==currentPartition && topic.name==currentTopic)">partition-{{i}}</button>
+                            <button type="button" (click)="getMessages(topic.name, i, maxMessages)" class="btn btn-success" *ngIf="i==currentPartition && topic.name==currentTopic">partition-{{i}}</button>
+                            
                     </ul>
               </ng-template>
             </ngb-panel>
     </ngb-accordion>
 </div>
 
-<div class="card mt-1 l-1 col-8" style="padding: 0 0">
+<div class="card mt-1 l-1 col-9" style="padding: 0 0">
         <div class="card-header" >
                 <h5 class="primary l-0" *ngIf="!currentTopic" style="padding-left: 0;">Click on a Topic and Partition to see Messages </h5>
-                <h5 class="primary" *ngIf="currentTopic" style="padding-left: 0;">Contents of {{currentTopic}} partition-{{currentPartition}}</h5>
+                <h5 class="primary" *ngIf="currentTopic" style="padding-left: 0;">Contents of <span class="text-info">{{currentTopic}}</span><span class="text-success"> partition-{{currentPartition}}</span></h5>
                 
         
         <div >
@@ -74,6 +79,9 @@
                     <th class="offset" scope="col">Offset</th>
                     <th scope="col">Key</th>
                     <th scope="col">Value</th>
+                    <th scope="col">Timestamp</th>
+                    <th scope="col">Timestamp Type</th>
+                    <th scope="col">Headers</th>
                   </tr>
                 </thead>
                 
@@ -87,7 +95,7 @@
                                         {{messageError}}
                     </div>           
                     <tr *ngIf="!messageLoading && (messages==null ||messages.length==0)">
-                       <td colspan="3" style="text-align: center;">No Messages found</td>     
+                       <td colspan="6" style="text-align: center;">No Messages found</td>     
                     </tr>
                         
                         <tr *ngFor="let message of messageSearchAction()">
@@ -95,6 +103,9 @@
                                 <td>{{message.key?message.key.substring(0,49):'null'}} <a href="#" *ngIf="message.key && message.key.length>50"  (click)="open(content,'key', message.key)">...</a></td>
                                 
                                 <td>{{message.value?message.value.substring(0,49):'null'}} <a href="#" *ngIf="message.value && message.value.length>50" (click)="open(content,'value', message.value)">...</a></td>
+                                <td>{{message.timeStamp | date:'medium'}}</td>
+                                <td>{{message.timeStampType}}</td>
+                                <td>{{(message.headers|json).substring(0,49)}} <a href="#" *ngIf=" (message.headers|json).length>50" (click)="open(content,'headers',JSON.stringify(message.headers))">...</a></td>
                         </tr>
                 </tbody>
         

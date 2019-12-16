@@ -88,6 +88,7 @@ export class HomeComponent {
     topicSearchAction(){
        return this.topicSearch.length>0?this.topics.filter(topic=>topic.name.indexOf(this.topicSearch)>=0):this.topics;
     }
+   
     messageSearchAction(){
 
         let filteredMessages = this.messages;

@@ -22,22 +22,22 @@ public class KafkaTopicService {
     private String bootstrap_servers;
 
 
-    @Value("${ssl.truststore.location}")
+    @Value("${ssl.truststore.location:#{null}}")
     private String truststoreLocation;
 
-    @Value("${ssl.keystore.location}")
+    @Value("${ssl.keystore.location:#{null}}")
     private String keystoreLocation;
 
-    @Value("${ssl.truststore.password}")
+    @Value("${ssl.truststore.password:#{null}}")
     private String truststorePassword;
 
-    @Value("${ssl.truststore.credentials}")
+    @Value("${ssl.truststore.credentials:#{null}}")
     private String truststoreCredentials;
 
-    @Value("${ssl.keystore.password}")
+    @Value("${ssl.keystore.password:#{null}}")
     private String keystorePassword;
 
-    @Value("${ssl.key.password}")
+    @Value("${ssl.key.password:#{null}}")
     private String keyPassword;
 
     @Value("${sasl.mechanism}")

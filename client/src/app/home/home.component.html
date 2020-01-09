@@ -22,10 +22,10 @@
     <ngb-accordion #acc="ngbAccordion"  >
             <ngb-panel id="{{topic.name}}" *ngFor="let topic of topicSearchAction()" [type]="currentTopic==topic.name?'info':''">
                 <ng-template ngbPanelTitle >
-                        <div class="topic-name">
-                                        <span style="float:left">{{topic.name}}</span>
-                                        <fa-icon [icon]="faPlus" *ngIf="!acc.activeIds.includes(topic.name)" style="float: right;"></fa-icon>
-                                        <fa-icon [icon]="faMinus" *ngIf="acc.activeIds.includes(topic.name)" style="float: right;"></fa-icon>
+                        <div class="topic-name row">
+                                        <span style="float:left" class="col-10" style="text-align: left;">{{topic.name}}</span>
+                                        <fa-icon class="col-1" [icon]="faPlus" *ngIf="!acc.activeIds.includes(topic.name)"  style="text-align: right;"></fa-icon>
+                                        <fa-icon class="col-1" [icon]="faMinus" *ngIf="acc.activeIds.includes(topic.name)"  style="text-align: right;"></fa-icon>
                                               
                         </div>
                             

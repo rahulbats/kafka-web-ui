@@ -33,31 +33,31 @@ public class KafkaMessageService {
     @Value("${bootstrap_servers}")
     private String bootstrap_servers;
 
-    @Value("${schema.registry.url}")
+    @Value("${schema.registry.url:#{null}}")
     private String schemaRegistryURL;
 
-    @Value("${ssl.truststore.location}")
+    @Value("${ssl.truststore.location:#{null}}")
     private String truststoreLocation;
 
-    @Value("${ssl.keystore.location}")
+    @Value("${ssl.keystore.location:#{null}}")
     private String keystoreLocation;
 
-    @Value("${ssl.truststore.password}")
+    @Value("${ssl.truststore.password:#{null}}")
     private String truststorePassword;
 
-    @Value("${ssl.truststore.credentials}")
+    @Value("${ssl.truststore.credentials:#{null}}")
     private String truststoreCredentials;
 
-    @Value("${ssl.keystore.password}")
+    @Value("${ssl.keystore.password:#{null}}")
     private String keystorePassword;
 
-    @Value("${ssl.key.password}")
+    @Value("${ssl.key.password:#{null}}")
     private String keyPassword;
 
     @Value("${sasl.mechanism}")
     private String saslMechanism;
 
-    @Value("${schema.registry.basic.auth.user.info}")
+    @Value("${schema.registry.basic.auth.user.info:#{null}}")
     private String srUserInfo;
 
 
@@ -71,8 +71,11 @@ public class KafkaMessageService {
             URL url = new URL(schemaRegistryURL+"/subjects/"+topic+"-key/versions/");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
-            String encoded = Base64.getEncoder().encodeToString((srUserInfo).getBytes(StandardCharsets.UTF_8));  //Java 8
-            con.setRequestProperty("Authorization", "Basic "+encoded);
+            if(srUserInfo!=null) {
+                String encoded = Base64.getEncoder().encodeToString((srUserInfo).getBytes(StandardCharsets.UTF_8));  //Java 8
+                con.setRequestProperty("Authorization", "Basic "+encoded);
+            }
+
             int status = con.getResponseCode();
             if(status!=200)
                 keyType =  MessageType.valueOf("JSON");
@@ -87,8 +90,10 @@ public class KafkaMessageService {
             URL url = new URL(schemaRegistryURL+"/subjects/"+topic+"-value/versions/");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
-            String encoded = Base64.getEncoder().encodeToString((srUserInfo).getBytes(StandardCharsets.UTF_8));  //Java 8
-            con.setRequestProperty("Authorization", "Basic "+encoded);
+            if(srUserInfo!=null) {
+                String encoded = Base64.getEncoder().encodeToString((srUserInfo).getBytes(StandardCharsets.UTF_8));  //Java 8
+                con.setRequestProperty("Authorization", "Basic "+encoded);
+            }
             int status = con.getResponseCode();
             if(status!=200)
                 valueType =  MessageType.valueOf("JSON");
@@ -113,8 +118,12 @@ public class KafkaMessageService {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyType==MessageType.JSON? "org.apache.kafka.common.serialization.StringDeserializer": KafkaAvroDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueType==MessageType.JSON? "org.apache.kafka.common.serialization.StringDeserializer": KafkaAvroDeserializer.class);
         props.put("schema.registry.url", schemaRegistryURL);
-        props.put("basic.auth.credentials.source","USER_INFO");
-        props.put("basic.auth.user.info",srUserInfo);
+
+        if(srUserInfo!=null){
+            props.put("basic.auth.user.info",srUserInfo);
+            props.put("basic.auth.credentials.source","USER_INFO");
+        }
+
 
         if(truststoreLocation!=null)
             props.put("ssl.truststore.location", truststoreLocation);

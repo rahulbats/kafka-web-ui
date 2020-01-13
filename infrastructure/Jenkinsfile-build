@@ -1,3 +1,8 @@
+stage 'Build JAR file'
+node{
+  sh 'cd server && gradlew clean build'
+}
+stage 'Build and push image to Registry'
 node {
     checkout scm
 

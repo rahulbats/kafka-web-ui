@@ -172,41 +172,26 @@ public class KafkaMessageService {
             ConsumerRecords<Object, Object> consumerRecords =
                     consumer.poll(java.time.Duration.ofMillis(timeOut));
             noRecordsCount++;
-           /* if (consumerRecords.count()==0) {
-                noRecordsCount++;
-                if (noRecordsCount > giveup) {
-                    logger.info("Hitting giveup");
-                    break;
-                }
-                else continue;
-            } else {*/
-                logger.info("Got back records count:"+consumerRecords.count());
-                consumerRecords.forEach(record -> {
-                    logger.info("Consumer Record:(key, value, partition, offset):"+
-                            record.key()+":"+ record.value()+":"+
-                            record.partition()+":"+ record.offset());
-                    String key=null;
-                    String value = null;
-                    List<String> headers = new ArrayList<>();
-                    if(record.key()!=null)
-                        key = record.key().toString();
-                    if(record.value()!=null)
-                        value = record.value().toString();
-                    if(record.headers()!=null)
-                        headers =StreamSupport.stream(record.headers().spliterator(), false).map(header -> header.toString()).collect(Collectors.toList());
+            logger.info("Got back records count:"+consumerRecords.count());
+            consumerRecords.forEach(record -> {
+                logger.debug("Consumer Record:(key, value, partition, offset):"+
+                        record.key()+":"+ record.value()+":"+
+                        record.partition()+":"+ record.offset());
+                String key=null;
+                String value = null;
+                List<String> headers = new ArrayList<>();
+                if(record.key()!=null)
+                    key = record.key().toString();
+                if(record.value()!=null)
+                    value = record.value().toString();
+                if(record.headers()!=null)
+                    headers =StreamSupport.stream(record.headers().spliterator(), false).map(header -> header.toString()).collect(Collectors.toList());
 
 
-                    messages.add(new Message(key, value, record.partition(), record.offset(), headers, record.timestamp(), record.timestampType().toString()));
-                });
-
-               // break;
-            //}
-
-
-
+                messages.add(new Message(key, value, record.partition(), record.offset(), headers, record.timestamp(), record.timestampType().toString()));
+            });
             //consumer.commitAsync();
         }
-
 
         consumer.close();
         Collections.reverse(messages);

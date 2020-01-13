@@ -25,7 +25,7 @@ public class UsersBean {
     @PostConstruct
     public void init() throws IOException {
         if(allowedUsersProp!=null) {
-            InputStream inputStream  = new FileInputStream(allowedUsersProp);
+            InputStream inputStream  = new FileInputStream(allowedUsersProp.trim());
             userProps.load(inputStream);
         } else {
             String[] userPasswordPairs = allowedUsers.split(",");

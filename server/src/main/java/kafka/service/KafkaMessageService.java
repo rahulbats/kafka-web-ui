@@ -4,6 +4,8 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import kafka.model.Message;
 import kafka.model.MessageType;
 import kafka.model.Topic;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -25,7 +27,7 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class KafkaMessageService {
-
+    final Log logger = LogFactory.getLog(getClass());
     @Value("${security_protocol}")
     private String security_protocol;
 
@@ -61,8 +63,15 @@ public class KafkaMessageService {
     private String srUserInfo;
 
 
+    @Value("${consumer.giveup}")
+    private int giveup;
+
+    @Value("${consumer.timeout}")
+    private int timeOut;
+
     public List<Message> listMessages(String username, String password, String topic, int partition,
                                       int maxMessagesToReturn) throws KafkaException {
+        logger.info("Get messages called");
         Map<String, List<PartitionInfo>> topics;
         MessageType keyType;
         MessageType valueType;
@@ -146,32 +155,36 @@ public class KafkaMessageService {
         consumer.assign(topicPartitions);
         consumer.seekToEnd(topicPartitions);
         long endPosition = consumer.position(topicPartition);
-
+        logger.info("this is the end position: "+endPosition);
         consumer.seekToBeginning(topicPartitions);
         long beginningPosition = consumer.position(topicPartition);
-
+        logger.info("this is the beginning position: "+beginningPosition);
         long recentMessagesStartPosition = endPosition - maxMessagesToReturn;
         if(recentMessagesStartPosition<beginningPosition)
             recentMessagesStartPosition =beginningPosition;
+        logger.info("this is the recentMessagesStartPosition position: "+recentMessagesStartPosition);
         consumer.seek(topicPartition, recentMessagesStartPosition);
 
         List<Message> messages = new ArrayList<>();
-        final int giveUp = 10;
+        //final int giveUp = 10;
         int noRecordsCount = 0;
-        while (true) {
+        while (noRecordsCount<giveup && messages.size()<(endPosition-recentMessagesStartPosition)) {
             ConsumerRecords<Object, Object> consumerRecords =
-                    consumer.poll(java.time.Duration.ofMillis(1000));
-
-            if (consumerRecords.count()==0) {
+                    consumer.poll(java.time.Duration.ofMillis(timeOut));
+            noRecordsCount++;
+           /* if (consumerRecords.count()==0) {
                 noRecordsCount++;
-                if (noRecordsCount > giveUp) break;
+                if (noRecordsCount > giveup) {
+                    logger.info("Hitting giveup");
+                    break;
+                }
                 else continue;
-            } else {
-
+            } else {*/
+                logger.info("Got back records count:"+consumerRecords.count());
                 consumerRecords.forEach(record -> {
-                    /*System.out.printf("Consumer Record:(%d, %s, %d, %d)\n",
-                            record.key(), record.value(),
-                            record.partition(), record.offset());*/
+                    logger.info("Consumer Record:(key, value, partition, offset):"+
+                            record.key()+":"+ record.value()+":"+
+                            record.partition()+":"+ record.offset());
                     String key=null;
                     String value = null;
                     List<String> headers = new ArrayList<>();
@@ -186,8 +199,8 @@ public class KafkaMessageService {
                     messages.add(new Message(key, value, record.partition(), record.offset(), headers, record.timestamp(), record.timestampType().toString()));
                 });
 
-                break;
-            }
+               // break;
+            //}
 
 
 

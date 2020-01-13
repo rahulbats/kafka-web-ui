@@ -1,6 +1,8 @@
 package kafka.service;
 
 import kafka.model.Topic;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.PartitionInfo;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class KafkaTopicService {
+    final Log logger = LogFactory.getLog(getClass());
     @Value("${security_protocol}")
     private String security_protocol;
 
@@ -53,23 +56,23 @@ public class KafkaTopicService {
 
 
         Properties props = new Properties();
-        props.put("bootstrap.servers", bootstrap_servers);
+        props.put("bootstrap.servers", bootstrap_servers.trim());
         props.put("group.id", "kafka-ui-consumer-group");
-        props.put("security.protocol", security_protocol);
-        props.put("sasl.mechanism",saslMechanism);
-        props.put("sasl.jaas.config",jaasString);
+        props.put("security.protocol", security_protocol.trim());
+        props.put("sasl.mechanism",saslMechanism.trim());
+        props.put("sasl.jaas.config",jaasString.trim());
         if(truststoreLocation!=null)
-            props.put("ssl.truststore.location", truststoreLocation);
+            props.put("ssl.truststore.location", truststoreLocation.trim());
         if(keystoreLocation!=null)
-            props.put("ssl.keystore.location", keystoreLocation);
+            props.put("ssl.keystore.location", keystoreLocation.trim());
         if(truststorePassword!=null)
-            props.put("ssl.truststore.password", truststorePassword);
+            props.put("ssl.truststore.password", truststorePassword.trim());
         if(truststoreCredentials!=null)
-            props.put("ssl.truststore.credentials", truststoreCredentials);
+            props.put("ssl.truststore.credentials", truststoreCredentials.trim());
         if(keystorePassword!=null)
-            props.put("ssl.keystore.password", keystorePassword);
+            props.put("ssl.keystore.password", keystorePassword.trim());
         if(keyPassword!=null)
-            props.put("ssl.key.password", keyPassword);
+            props.put("ssl.key.password", keyPassword.trim());
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 

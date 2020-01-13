@@ -1,0 +1,12 @@
+node {
+    checkout scm
+
+    docker.withRegistry('https://registry.jpl.nasa.gov', "${params.credentials}") {
+
+        def customImage = docker.build("ebis/$CONTAINER_IMAGE:${env.BUILD_ID}", "-f infrastructure/Dockerfile .")
+
+        /* Push the container to the custom Registry */
+        customImage.push()
+    }
+}
+

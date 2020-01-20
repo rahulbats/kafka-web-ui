@@ -1,5 +1,5 @@
 # kafka-web-ui
-The only web UI for kafka messages which uses the SASL usersname/passwords directly as logins.
+## The only web UI for kafka messages which uses the SASL usersname/passwords directly as logins.
 This allows your team to view messages using SASL accounts and Admins to assign appropriate ACLs to them.
 
 ## How to run

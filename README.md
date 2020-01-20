@@ -3,28 +3,29 @@
 This allows your team to view messages using SASL accounts and Admins to assign appropriate ACLs to them.
 
 ## How to run
+### Run as a docker container
+You can run this as a docker container `docker run  -e ALLOWED_USERS=[SASL USERS] -e SECURITY_PROTOCOL=[SECURITY PROTOCOL] -e BOOTSTRAP_SERVERS=[BOOTSTRAP SERVERS] -e SCHEMA_REGISTRY_URL=[OPTIONAL SCHEMA REGISTRY URL] -p 8080:8080 rahulbats/kafka-web-ui:1.0.12` 
 
-You can run this as a docker container `docker run  -e ALLOWED_USERS=[SASL USERS] SECURITY_PROTOCOL=[SECURITY PROTOCOL] BOOTSTRAP_SERVERS=[BOOTSTRAP SERVERS] SCHEMA_REGISTRY_URL=[OPTIONAL SCHEMA REGISTRY URL] rahulbats/kafka-web-ui:1.0.12` 
+Then access it in browser as `http://localhost:8080/api/ui/index.html`
 
 
-The SASL USERS is a string made of the SASL userid:passwords seperated by coma for example `test:test123,previleged:previleged123` 
+The `SASL USERS` is a string made of the SASL userid:passwords seperated by coma for example `test:test123,previleged:previleged123` 
 
 If you prefer to use a file instead of environment variable you can create a properties file where the key is username and value is password.
-You can pass the path of the properties file as `USERS_PROPERTIES`.
+You can pass the path of the properties file as `USERS_PROPERTIES` environment variable. Refer the [environment variables section](#list-of-environment-variables) for more information. 
 
-Then expose it as a service and access it as in browser as `http://[Service URL]/api/ui/index.html`
 
-To run locally cd into the server folder build jar using `./gradlew clean build`
-
-Then run the jar using `java -jar build/libs/kafka-web-ui-1.0.0.jar`
-
-Open a browser and go to `http://localhost:8080/api/ui/index.html`
+### Run as standalone java application
+* run `./build.sh`
+* export the [environment variables](#list-of-environment-variables) 
+* Run the jar using `java -jar server/build/libs/kafka-web-ui-*.jar`
+* Open a browser and go to `http://localhost:8080/api/ui/index.html`
 
 ## List of environment variables
 ### Table below describes the environment variables. Refer the [application.properties file](server/src/main/resources/application.properties) on how these are used.
 | Environment Variable | Optional | Description |
 | --- | --- | --- |
-| ALLOWED_USERS | Yes | Optional String Containing SASL username:password seperated by comas |
+| ALLOWED_USERS | Yes | Optional String Containing SASL username:password seperated by comas for example `test:test123,previleged:previleged123` |
 | USERS_PROPERTIES | Yes | If you dont want to use the above variable you can point to the path of properties file, which has key as user and value as SASL password |
 | BOOTSRAP_SERVERS | No | Broker bootstrap servers |
 | SECURITY_PROTOCOL | No | Broker security protocol |

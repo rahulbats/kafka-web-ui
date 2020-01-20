@@ -1,4 +1,4 @@
 build
 .gradle
 out
-src/main/resources/static
+src/main/resources/static/dist

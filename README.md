@@ -35,7 +35,7 @@ You can pass the path of the properties file as `USERS_PROPERTIES` environment v
 | SSL_KEYSTORE_LOCATION | Yes | Path of the Keystore for Kafka broker |
 | SSL_KEYSTORE_PASSWORD | Yes | Password of the Keystore for Kafka broker |
 | SSL_KEY_PASSWORD | Yes | Password of the Key for Kafka broker |
-| SASL_MECHANISM | Yes | SASL mechanism for Kafka broker |
+| SASL_MECHANISM | Yes | SASL mechanism for Kafka broker. Can either be `PLAIN` or `SCRAM`. Default is `PLAIN`. |
 | SCHEMA_REGISTRY_URL | Yes | URL for schema registry |
 | SCHEMA_REGISTRY_BASIC_AUTH_USER_INFO | Yes | Schema registry auth username:password | 
 

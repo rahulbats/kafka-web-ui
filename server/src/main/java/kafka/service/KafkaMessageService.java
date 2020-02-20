@@ -185,7 +185,10 @@ public class KafkaMessageService {
                 if(record.value()!=null)
                     value = record.value().toString();
                 if(record.headers()!=null)
-                    headers =StreamSupport.stream(record.headers().spliterator(), false).map(header -> header.toString()).collect(Collectors.toList());
+                    headers =StreamSupport.stream(record.headers().spliterator(), false).map(header -> {
+                        StringBuilder sb = new StringBuilder("{\"key\":\"").append(header.key()).append("\",\"value\":\"").append(new String(header.value()) ).append("\"}");
+                        return sb.toString();
+                    }).collect(Collectors.toList());
 
 
                 messages.add(new Message(key, value, record.partition(), record.offset(), headers, record.timestamp(), record.timestampType().toString()));

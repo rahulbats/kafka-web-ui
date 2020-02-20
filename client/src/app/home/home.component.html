@@ -105,7 +105,7 @@
                                 <td>{{message.value?message.value.substring(0,49):'null'}} <a href="#" *ngIf="message.value && message.value.length>50" (click)="open(content,'value', message.value)">...</a></td>
                                 <td>{{message.timeStamp | date:'medium'}}</td>
                                 <td>{{message.timeStampType}}</td>
-                                <td>{{(message.headers|json).substring(0,49)}} <a href="#" *ngIf=" (message.headers|json).length>50" (click)="open(content,'headers',JSON.stringify(message.headers))">...</a></td>
+                                <td>{{message.headers.toString().substring(0,49)}} <a href="#" *ngIf="message.headers.toString().length>50" (click)="open(content,'headers',message.headers.toString())">...</a></td>
                         </tr>
                 </tbody>
         

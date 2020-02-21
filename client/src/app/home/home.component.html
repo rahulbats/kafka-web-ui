@@ -59,10 +59,10 @@
                                 <input class="form-control" type="number" id="maxMessages"
                                     [(ngModel)]="maxMessages"/>
                         </div>
-                        <button class="btn btn-primary l-1 mr-1 col-sm-1" *ngIf="maxMessages!=originalMaxMessages" (click)="originalMaxMessages=maxMessages;getMessages(currentTopic, currentPartition, maxMessages)">Set</button>
+                        <button class="btn btn-primary l-1 mr-1 col-sm-1" *ngIf="maxMessages!=originalMaxMessages" (click)="originalMaxMessages=maxMessages;getMessages( maxMessages)">Set</button>
                         <button class="btn btn-outline-secondary l-1 mr-1 col-sm-1" *ngIf="maxMessages!=originalMaxMessages" (click)="maxMessages=originalMaxMessages">Reset</button>
                         
-                        <button class="btn btn-outline-primary l-1 ml-1 col-sm-1" ngbPopover="Refresh" triggers="mouseenter:mouseleave" (click)="getMessages(currentTopic, currentPartition, maxMessages)"><fa-icon [icon]="faSyncAlt" ></fa-icon></button>
+                        <button class="btn btn-outline-primary l-1 ml-1 col-sm-1" ngbPopover="Refresh" triggers="mouseenter:mouseleave" (click)="getMessages( maxMessages)"><fa-icon [icon]="faSyncAlt" ></fa-icon></button>
                         <input type="search" class="form-control ds-input l-1 ml-1 col-sm-2" id="search-messages" placeholder="Search..." aria-label="Search for messages..." autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-owns="algolia-autocomplete-listbox-0" dir="auto" 
                              [(ngModel)]="messageSearch">
     

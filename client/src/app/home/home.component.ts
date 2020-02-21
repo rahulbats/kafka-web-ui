@@ -35,7 +35,7 @@ export class HomeComponent {
     constructor(private topicsService: TopicsService, private messageService:MessageService, private modalService: NgbModal, private route: ActivatedRoute,private router: Router) { }
 
     ngOnInit() {
-        this.route.params.subscribe(params=>{
+        this.route.queryParams.subscribe(params=>{
             this.currentTopic = params['topic'];
             this.currentPartition = +params['partition'];
             if(this.currentTopic && this.currentTopic!='') {
@@ -62,7 +62,7 @@ export class HomeComponent {
                 );
     }
     gotoMessages(topic: string, partition: number){
-        this.router.navigate(['/home', topic, partition]); 
+        this.router.navigate(['/home'],{ 'queryParams': {'topic': topic, 'partition': partition}}); 
     }
     getMessages( maxMessages: number) {
         this.messages = [];

@@ -4,7 +4,7 @@ This allows your team to view messages using SASL accounts and Admins to assign 
 
 ## How to run
 ### Run as a docker container
-You can run this as a docker container `docker run  -e ALLOWED_USERS=[SASL USERS] -e SECURITY_PROTOCOL=[SECURITY PROTOCOL] -e BOOTSTRAP_SERVERS=[BOOTSTRAP SERVERS] -e SCHEMA_REGISTRY_URL=[OPTIONAL SCHEMA REGISTRY URL] -p 8080:8080 rahulbats/kafka-web-ui:1.0.12` 
+You can run this as a docker container `docker run  -e ALLOWED_USERS=[SASL USERS] -e SECURITY_PROTOCOL=[SECURITY PROTOCOL] -e BOOTSTRAP_SERVERS=[BOOTSTRAP SERVERS] -e SCHEMA_REGISTRY_URL=[OPTIONAL SCHEMA REGISTRY URL] -p 8080:8080 rahulbats/kafka-web-ui:[LATEST TAG]` 
 
 Then access it in browser as `http://localhost:8080/api/ui/index.html`
 

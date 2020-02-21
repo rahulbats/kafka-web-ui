@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 public class MessagesController {
@@ -24,7 +25,7 @@ public class MessagesController {
     private UsersBean usersBean;
 
     @GetMapping(path ="/messages/{topic}/{partition}/{maxMessagesToReturn}", produces = "application/json")
-    public List<Message> getMessages(@PathVariable String topic, @PathVariable int partition,  @PathVariable int maxMessagesToReturn) {
+    public List<Message> getMessages(@PathVariable String topic, @PathVariable int partition,  @PathVariable int maxMessagesToReturn) throws ExecutionException, InterruptedException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails)principal).getUsername();
 

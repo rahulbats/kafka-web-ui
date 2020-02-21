@@ -3,18 +3,19 @@ package kafka.service;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import kafka.model.Message;
 import kafka.model.MessageType;
-import kafka.model.Topic;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.kafka.clients.admin.ListTopicsResult;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.ConfigEntry;
+import org.apache.kafka.clients.admin.DescribeConfigsResult;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.header.Header;
-import org.apache.kafka.common.record.Records;
+import org.apache.kafka.clients.admin.Config;
+import org.apache.kafka.common.config.ConfigResource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -70,7 +72,7 @@ public class KafkaMessageService {
     private int timeOut;
 
     public List<Message> listMessages(String username, String password, String topic, int partition,
-                                      int maxMessagesToReturn) throws KafkaException {
+                                      int maxMessagesToReturn) throws KafkaException, ExecutionException, InterruptedException {
         logger.info("Get messages called");
         Map<String, List<PartitionInfo>> topics;
         MessageType keyType;
@@ -148,30 +150,59 @@ public class KafkaMessageService {
             props.put("ssl.key.password", keyPassword);
 
         KafkaConsumer<Object, Object> consumer = new KafkaConsumer<Object, Object>(props);
+        AdminClient admin = AdminClient.create(props);
+        Collection<ConfigResource> cr =  Collections.singleton( new ConfigResource(ConfigResource.Type.TOPIC, topic));
+        DescribeConfigsResult configsResult = admin.describeConfigs(cr);
 
+        Config all_configs = (Config)configsResult.all().get().values().toArray()[0];
+
+        Iterator configIterator = all_configs.entries().iterator();
+
+        boolean isCompacted = false;
+
+        while (configIterator.hasNext())
+        {
+            ConfigEntry currentConfig = (ConfigEntry) configIterator.next();
+            if (currentConfig.name().equals("cleanup.policy")) {
+                isCompacted = currentConfig.value().equals("compact");
+            }
+        }
+        logger.info("Is compacted:"+ isCompacted);
         TopicPartition topicPartition = new TopicPartition(topic, partition);
         List<TopicPartition> topicPartitions = new ArrayList<>();
         topicPartitions.add(topicPartition);
         consumer.assign(topicPartitions);
-        consumer.seekToEnd(topicPartitions);
-        long endPosition = consumer.position(topicPartition);
-        logger.info("this is the end position: "+endPosition);
-        consumer.seekToBeginning(topicPartitions);
-        long beginningPosition = consumer.position(topicPartition);
-        logger.info("this is the beginning position: "+beginningPosition);
-        long recentMessagesStartPosition = endPosition - maxMessagesToReturn;
-        if(recentMessagesStartPosition<beginningPosition)
-            recentMessagesStartPosition =beginningPosition;
-        logger.info("this is the recentMessagesStartPosition position: "+recentMessagesStartPosition);
-        consumer.seek(topicPartition, recentMessagesStartPosition);
+        long endPosition=0;
+        long recentMessagesStartPosition = 0;
+
+        if(!isCompacted) {
+            consumer.seekToEnd(topicPartitions);
+            endPosition = consumer.position(topicPartition);
+            logger.info("this is the end position: "+endPosition);
+            consumer.seekToBeginning(topicPartitions);
+            long beginningPosition = consumer.position(topicPartition);
+            logger.info("this is the beginning position: "+beginningPosition);
+            recentMessagesStartPosition = endPosition - maxMessagesToReturn;
+            if(recentMessagesStartPosition<beginningPosition)
+                recentMessagesStartPosition =beginningPosition;
+            logger.info("this is the recentMessagesStartPosition position: "+recentMessagesStartPosition);
+            consumer.seek(topicPartition, recentMessagesStartPosition);
+        } else {
+            consumer.seek(topicPartition, 0);
+        }
+
 
         List<Message> messages = new ArrayList<>();
         //final int giveUp = 10;
-        int noRecordsCount = 0;
-        while (noRecordsCount<giveup && messages.size()<(endPosition-recentMessagesStartPosition)) {
+        int attempts = 0;
+        while (attempts<giveup ) {
+            logger.info("this is the messages size:"+messages.size());
+            if(!isCompacted && messages.size()>=(endPosition-recentMessagesStartPosition))
+                break;
             ConsumerRecords<Object, Object> consumerRecords =
                     consumer.poll(java.time.Duration.ofMillis(timeOut));
-            noRecordsCount++;
+            attempts++;
+            logger.info("this is the attempt number:"+attempts);
             logger.info("Got back records count:"+consumerRecords.count());
             consumerRecords.forEach(record -> {
                 logger.debug("Consumer Record:(key, value, partition, offset):"+

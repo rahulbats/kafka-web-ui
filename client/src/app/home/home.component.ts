@@ -7,6 +7,7 @@ import { MessageService } from '@app/_services/message.service';
 import { faEllipsisH, faSyncAlt , faPlus, faMinus} from '@fortawesome/free-solid-svg-icons';
 import {NgbModal, ModalDismissReasons, NgbModalRef, NgbPanelChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import { ModalContentComponent } from '../modal-content/modal-content.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({ templateUrl: 'home.component.html' })
 export class HomeComponent {
@@ -18,8 +19,8 @@ export class HomeComponent {
     faMinus = faMinus;
     closeResult: string;
     topics: Topic[];
-    currentTopic: string;
-    currentPartition: number;
+    currentTopic: string='';
+    currentPartition: number=0;
     messages: Message[]=[]; 
     topicSearch: string = ''; 
     messageSearch: string = '';
@@ -30,10 +31,17 @@ export class HomeComponent {
     messagesSize = this.messages.length;
     topicError=null;
     messageError=null;
-    constructor(private topicsService: TopicsService, private messageService:MessageService, private modalService: NgbModal) { }
+    
+    constructor(private topicsService: TopicsService, private messageService:MessageService, private modalService: NgbModal, private route: ActivatedRoute,private router: Router) { }
 
     ngOnInit() {
-        
+        this.route.params.subscribe(params=>{
+            this.currentTopic = params['topic'];
+            this.currentPartition = +params['partition'];
+            if(this.currentTopic && this.currentTopic!='') {
+                this.getMessages( this.currentPartition);
+            }
+        })
         this.getTopics();
     }
     getTopics(){
@@ -53,16 +61,18 @@ export class HomeComponent {
                 }
                 );
     }
-   
-    getMessages(topic: string, partition: number, maxMessages: number) {
+    gotoMessages(topic: string, partition: number){
+        this.router.navigate(['/home', topic, partition]); 
+    }
+    getMessages( maxMessages: number) {
         this.messages = [];
         this.messageError = null;
-        this.currentTopic = topic;
-        this.currentPartition = partition;
+        //this.currentTopic = topic;
+        //this.currentPartition = partition;
         window.scrollTo(0, 0);
         this.messageLoading = true;
         this.messageService.
-            getMessages(topic, partition, maxMessages)
+            getMessages(this.currentTopic, this.currentPartition, maxMessages)
             .pipe(first())
             .subscribe(
                 messages => {

@@ -73,7 +73,7 @@ public class KafkaMessageService {
 
     public List<Message> listMessages(String username, String password, String topic, int partition,
                                       int maxMessagesToReturn) throws KafkaException, ExecutionException, InterruptedException {
-        logger.info("Get messages called");
+        logger.debug("Get messages called");
         Map<String, List<PartitionInfo>> topics;
         MessageType keyType;
         MessageType valueType;
@@ -167,7 +167,7 @@ public class KafkaMessageService {
                 isCompacted = currentConfig.value().equals("compact");
             }
         }
-        logger.info("Is compacted:"+ isCompacted);
+        logger.debug("Is compacted:"+ isCompacted);
         TopicPartition topicPartition = new TopicPartition(topic, partition);
         List<TopicPartition> topicPartitions = new ArrayList<>();
         topicPartitions.add(topicPartition);
@@ -178,10 +178,10 @@ public class KafkaMessageService {
         if(!isCompacted) {
             consumer.seekToEnd(topicPartitions);
             endPosition = consumer.position(topicPartition);
-            logger.info("this is the end position: "+endPosition);
+            logger.debug("this is the end position: "+endPosition);
             consumer.seekToBeginning(topicPartitions);
             long beginningPosition = consumer.position(topicPartition);
-            logger.info("this is the beginning position: "+beginningPosition);
+            logger.debug("this is the beginning position: "+beginningPosition);
             recentMessagesStartPosition = endPosition - maxMessagesToReturn;
             if(recentMessagesStartPosition<beginningPosition)
                 recentMessagesStartPosition =beginningPosition;
@@ -202,8 +202,8 @@ public class KafkaMessageService {
             ConsumerRecords<Object, Object> consumerRecords =
                     consumer.poll(java.time.Duration.ofMillis(timeOut));
             attempts++;
-            logger.info("this is the attempt number:"+attempts);
-            logger.info("Got back records count:"+consumerRecords.count());
+            logger.debug("this is the attempt number:"+attempts);
+            logger.debug("Got back records count:"+consumerRecords.count());
             consumerRecords.forEach(record -> {
                 logger.debug("Consumer Record:(key, value, partition, offset):"+
                         record.key()+":"+ record.value()+":"+

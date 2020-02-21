@@ -36,8 +36,8 @@
 
                 <ng-template ngbPanelContent>
                     <ul class="list-group" *ngFor="let item of [].constructor(topic.partitionCount); let i = index">
-                            <button type="button" (click)="getMessages(topic.name, i, maxMessages)" class="btn btn-outline-secondary" *ngIf="!(i==currentPartition && topic.name==currentTopic)">partition-{{i}}</button>
-                            <button type="button" (click)="getMessages(topic.name, i, maxMessages)" class="btn btn-success" *ngIf="i==currentPartition && topic.name==currentTopic">partition-{{i}}</button>
+                            <button type="button"  (click)="gotoMessages(topic.name, i)" class="btn btn-outline-secondary" *ngIf="!(i==currentPartition && topic.name==currentTopic)">partition-{{i}}</button>
+                            <button type="button" (click)="gotoMessages(topic.name, i)" class="btn btn-success" *ngIf="i==currentPartition && topic.name==currentTopic">partition-{{i}}</button>
                             
                     </ul>
               </ng-template>

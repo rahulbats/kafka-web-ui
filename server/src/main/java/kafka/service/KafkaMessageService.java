@@ -3,6 +3,7 @@ package kafka.service;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import kafka.model.Message;
 import kafka.model.MessageType;
+import kafka.model.MessagesContainer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -71,8 +72,8 @@ public class KafkaMessageService {
     @Value("${consumer.timeout}")
     private int timeOut;
 
-    public List<Message> listMessages(String username, String password, String topic, int partition,
-                                      int maxMessagesToReturn) throws KafkaException, ExecutionException, InterruptedException {
+    public MessagesContainer listMessages(String username, String password, String topic, int partition,
+                                          int maxMessagesToReturn) throws KafkaException, ExecutionException, InterruptedException {
         logger.debug("Get messages called");
         Map<String, List<PartitionInfo>> topics;
         MessageType keyType;
@@ -229,7 +230,7 @@ public class KafkaMessageService {
 
         consumer.close();
         Collections.reverse(messages);
-        return messages;
+        return new MessagesContainer(isCompacted, messages);
 
     }
 }

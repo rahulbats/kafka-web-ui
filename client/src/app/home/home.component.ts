@@ -21,6 +21,7 @@ export class HomeComponent {
     topics: Topic[];
     currentTopic: string='';
     currentPartition: number=0;
+    isCompacted: boolean = false;
     messages: Message[]=[]; 
     topicSearch: string = ''; 
     messageSearch: string = '';
@@ -75,9 +76,10 @@ export class HomeComponent {
             getMessages(this.currentTopic, this.currentPartition, maxMessages)
             .pipe(first())
             .subscribe(
-                messages => {
+                messagesContainer => {
                     this.messageLoading = false;
-                    this.messages = messages;
+                    this.messages = messagesContainer.messages;
+                    this.isCompacted = messagesContainer.compacted;
                 },
                 error=> {
                     this.messageLoading = false;

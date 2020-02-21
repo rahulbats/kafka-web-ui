@@ -50,11 +50,14 @@
                 <h5 class="primary l-0" *ngIf="!currentTopic" style="padding-left: 0;">Click on a Topic and Partition to see Messages </h5>
                 <h5 class="primary" *ngIf="currentTopic" style="padding-left: 0;">Contents of <span class="text-info">{{currentTopic}}</span><span class="text-success"> partition-{{currentPartition}}</span></h5>
                 
-        
-        <div >
+        <div *ngIf="messageLoading" class="d-flex align-items-center" style="padding: 20px;">
+                <strong>Loading...</strong>
+                <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                </div>
+        <div *ngIf="!messageLoading">
                 
-                <div class="form-group row" >
-                        <label for="maxMessages" class="col-sm-2 mt-0 l-0 col-form-label">Max Messages(Doesn't apply to compacted)</label>
+                <div class="form-group row" *ngIf="isCompacted==false">
+                        <label for="maxMessages" class="col-sm-2 mt-0 l-0 col-form-label">Max Messages</label>
                         <div class="col-sm-2">
                                 <input class="form-control" type="number" id="maxMessages"
                                     [(ngModel)]="maxMessages"/>
@@ -67,7 +70,9 @@
                              [(ngModel)]="messageSearch">
     
                 </div>
-                
+                <div class="form-group row" *ngIf="isCompacted==true">
+                        This is a compacted topic
+                </div>
         </div>
         </div>    
         

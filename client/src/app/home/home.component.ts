@@ -40,7 +40,7 @@ export class HomeComponent {
             this.currentTopic = params['topic'];
             this.currentPartition = +params['partition'];
             if(this.currentTopic && this.currentTopic!='') {
-                this.getMessages( this.currentPartition);
+                this.getMessages( );
             }
         })
         this.getTopics();
@@ -65,7 +65,7 @@ export class HomeComponent {
     gotoMessages(topic: string, partition: number){
         this.router.navigate(['/home'],{ 'queryParams': {'topic': topic, 'partition': partition}}); 
     }
-    getMessages( maxMessages: number) {
+    getMessages( ) {
         this.messages = [];
         this.messageError = null;
         //this.currentTopic = topic;
@@ -73,7 +73,7 @@ export class HomeComponent {
         window.scrollTo(0, 0);
         this.messageLoading = true;
         this.messageService.
-            getMessages(this.currentTopic, this.currentPartition, maxMessages)
+            getMessages(this.currentTopic, this.currentPartition, this.maxMessages)
             .pipe(first())
             .subscribe(
                 messagesContainer => {

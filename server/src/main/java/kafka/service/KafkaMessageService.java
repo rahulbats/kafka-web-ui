@@ -151,24 +151,7 @@ public class KafkaMessageService {
             props.put("ssl.key.password", keyPassword);
 
         KafkaConsumer<Object, Object> consumer = new KafkaConsumer<Object, Object>(props);
-        AdminClient admin = AdminClient.create(props);
-        Collection<ConfigResource> cr =  Collections.singleton( new ConfigResource(ConfigResource.Type.TOPIC, topic));
-        DescribeConfigsResult configsResult = admin.describeConfigs(cr);
 
-        Config all_configs = (Config)configsResult.all().get().values().toArray()[0];
-
-        Iterator configIterator = all_configs.entries().iterator();
-
-        boolean isCompacted = false;
-
-        while (configIterator.hasNext())
-        {
-            ConfigEntry currentConfig = (ConfigEntry) configIterator.next();
-            if (currentConfig.name().equals("cleanup.policy")) {
-                isCompacted = currentConfig.value().equals("compact");
-            }
-        }
-        logger.debug("Is compacted:"+ isCompacted);
         TopicPartition topicPartition = new TopicPartition(topic, partition);
         List<TopicPartition> topicPartitions = new ArrayList<>();
         topicPartitions.add(topicPartition);
@@ -176,21 +159,19 @@ public class KafkaMessageService {
         long endPosition=0;
         long recentMessagesStartPosition = 0;
 
-        if(!isCompacted) {
+
             consumer.seekToEnd(topicPartitions);
             endPosition = consumer.position(topicPartition);
-            logger.debug("this is the end position: "+endPosition);
+            logger.info("this is the end position: "+endPosition);
             consumer.seekToBeginning(topicPartitions);
             long beginningPosition = consumer.position(topicPartition);
-            logger.debug("this is the beginning position: "+beginningPosition);
+            logger.info("this is the beginning position: "+beginningPosition);
             recentMessagesStartPosition = endPosition - maxMessagesToReturn;
             if(recentMessagesStartPosition<beginningPosition)
                 recentMessagesStartPosition =beginningPosition;
             logger.info("this is the recentMessagesStartPosition position: "+recentMessagesStartPosition);
             consumer.seek(topicPartition, recentMessagesStartPosition);
-        } else {
-            consumer.seek(topicPartition, 0);
-        }
+
 
 
         List<Message> messages = new ArrayList<>();
@@ -198,7 +179,7 @@ public class KafkaMessageService {
         int attempts = 0;
         while (attempts<giveup ) {
             logger.info("this is the messages size:"+messages.size());
-            if(!isCompacted && messages.size()>=(endPosition-recentMessagesStartPosition))
+            if( messages.size()>=(endPosition-recentMessagesStartPosition))
                 break;
             ConsumerRecords<Object, Object> consumerRecords =
                     consumer.poll(java.time.Duration.ofMillis(timeOut));
@@ -230,7 +211,7 @@ public class KafkaMessageService {
 
         consumer.close();
         Collections.reverse(messages);
-        return new MessagesContainer(isCompacted, messages);
+        return new MessagesContainer(false, messages);
 
     }
 }

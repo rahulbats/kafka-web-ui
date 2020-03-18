@@ -21,13 +21,13 @@ public class MessagesController {
     @Autowired
     private UsersBean usersBean;
 
-    @GetMapping(path ="/messages/{topic}/{partition}/{maxMessagesToReturn}", produces = "application/json")
-    public MessagesContainer getMessages(@PathVariable String topic, @PathVariable int partition, @PathVariable int maxMessagesToReturn) throws ExecutionException, InterruptedException {
+    @GetMapping(path ="/messages/{topic}/{partition}/{maxMessagesToReturn}/{hideOlderMessages}", produces = "application/json")
+    public MessagesContainer getMessages(@PathVariable String topic, @PathVariable int partition, @PathVariable int maxMessagesToReturn, @PathVariable boolean hideOlderMessages) throws ExecutionException, InterruptedException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails)principal).getUsername();
 
         return kafkaMessageService.listMessages( username,  usersBean.getPassword(username),  topic,  partition ,
-                maxMessagesToReturn);
+                maxMessagesToReturn, hideOlderMessages);
     }
 
 }

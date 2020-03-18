@@ -10,9 +10,9 @@ export class MessageService {
 
   constructor(private http: HttpClient) { }
 
-  getMessages(topic: string, partition: number, maxMessages: number) {
+  getMessages(topic: string, partition: number, maxMessages: number, hideOlderMessages: boolean) {
     return this.http.get<MessagesContainer>
-                  (`${environment.apiUrl}/api/messages/${topic}/${partition}/${maxMessages}`);
+                  (`${environment.apiUrl}/api/messages/${topic}/${partition}/${maxMessages}/${hideOlderMessages}`);
   }
 
 }

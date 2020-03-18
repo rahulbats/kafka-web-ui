@@ -2,7 +2,7 @@ package kafka.model;
 
 import java.util.List;
 
-public class Message {
+public class Message implements Comparable<Message>{
     private String key;
     private String value;
     private int partition;
@@ -86,4 +86,8 @@ public class Message {
     }
 
 
+    @Override
+    public int compareTo(Message o) {
+        return Long.compare(o.getOffset(), this.offset);
+    }
 }

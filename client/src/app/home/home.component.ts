@@ -32,7 +32,8 @@ export class HomeComponent {
     messagesSize = this.messages.length;
     topicError=null;
     messageError=null;
-    
+    hideOldKeyMessages=false;
+
     constructor(private topicsService: TopicsService, private messageService:MessageService, private modalService: NgbModal, private route: ActivatedRoute,private router: Router) { }
 
     ngOnInit() {
@@ -73,7 +74,7 @@ export class HomeComponent {
         window.scrollTo(0, 0);
         this.messageLoading = true;
         this.messageService.
-            getMessages(this.currentTopic, this.currentPartition, this.maxMessages)
+            getMessages(this.currentTopic, this.currentPartition, this.maxMessages, this.hideOldKeyMessages)
             .pipe(first())
             .subscribe(
                 messagesContainer => {

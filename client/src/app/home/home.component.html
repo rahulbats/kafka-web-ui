@@ -6,7 +6,7 @@
                 <h5 class="primary col-6" style="padding-left: 0;">Topic List</h5>
                 <button class="btn btn-outline-primary col-2" *ngIf="acc.activeIds.length>0" (click)="acc.activeIds=[]" ngbPopover="Collapse All" triggers="mouseenter:mouseleave"><fa-icon  [icon]="faMinus" ></fa-icon></button>
                 <button class="btn btn-outline-primary l-1 ml-1 col-2" ngbPopover="Refresh" triggers="mouseenter:mouseleave" (click)="getTopics()"><fa-icon [icon]="faSyncAlt" ></fa-icon></button>
-                         
+                   
         </div>
         <div class="row">
                 <input type="search" class="form-control ds-input" id="search-topic" placeholder="Search..." aria-label="Search for..." autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-owns="algolia-autocomplete-listbox-0" dir="auto" style="position: relative; vertical-align: top;" [(ngModel)]="topicSearch">
@@ -50,31 +50,29 @@
                 <h5 class="primary l-0" *ngIf="!currentTopic" style="padding-left: 0;">Click on a Topic and Partition to see Messages </h5>
                 <h5 class="primary" *ngIf="currentTopic" style="padding-left: 0;">Contents of <span class="text-info">{{currentTopic}}</span><span class="text-success"> partition-{{currentPartition}}</span></h5>
                 
-        <div *ngIf="messageLoading" class="d-flex align-items-center" style="padding: 20px;">
-                <strong>Loading...</strong>
-                <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
-                </div>
-        <div *ngIf="!messageLoading">
+              
+       
                 
-                <div class="form-group row" *ngIf="isCompacted==false">
+                <div class="form-group row">
                         <label for="maxMessages" class="col-sm-2 mt-0 l-0 col-form-label">Max Messages</label>
                         <div class="col-sm-2">
                                 <input class="form-control" type="number" id="maxMessages"
                                     [(ngModel)]="maxMessages"/>
                         </div>
-                        <button class="btn btn-primary l-1 mr-1 col-sm-1" *ngIf="maxMessages!=originalMaxMessages" (click)="originalMaxMessages=maxMessages;getMessages( maxMessages)">Set</button>
+                        <button class="btn btn-primary l-1 mr-1 col-sm-1" *ngIf="maxMessages!=originalMaxMessages" (click)="originalMaxMessages=maxMessages;getMessages( )">Set</button>
                         <button class="btn btn-outline-secondary l-1 mr-1 col-sm-1" *ngIf="maxMessages!=originalMaxMessages" (click)="maxMessages=originalMaxMessages">Reset</button>
                         
-                        <button class="btn btn-outline-primary l-1 ml-1 col-sm-1" ngbPopover="Refresh" triggers="mouseenter:mouseleave" (click)="getMessages( maxMessages)"><fa-icon [icon]="faSyncAlt" ></fa-icon></button>
+                        <button class="btn btn-outline-primary l-1 ml-1 col-sm-1" ngbPopover="Refresh" triggers="mouseenter:mouseleave" (click)="getMessages( )"><fa-icon [icon]="faSyncAlt" ></fa-icon></button>
                         <input type="search" class="form-control ds-input l-1 ml-1 col-sm-2" id="search-messages" placeholder="Search..." aria-label="Search for messages..." autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-owns="algolia-autocomplete-listbox-0" dir="auto" 
                              [(ngModel)]="messageSearch">
-    
+                        <div class="form-check col-sm-1" style="margin-left: 1rem; margin-top: 0.5rem;">
+                                <input type="checkbox" id="hideold" class="form-check-input" [(ngModel)]="hideOldKeyMessages" (change)="getMessages( )"> 
+                                <label class="form-check-label" for="hideold">Hide Old Messages</label>     
+                        </div>
+
                 </div>
-                <div class="form-group row" *ngIf="isCompacted==true">
-                        This is a compacted topic
-                </div>
-        </div>
-        </div>    
+               
+       
         
         
         

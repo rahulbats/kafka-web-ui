@@ -10,6 +10,7 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.DescribeConfigsResult;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.KafkaException;
@@ -73,7 +74,7 @@ public class KafkaMessageService {
     private int timeOut;
 
     public MessagesContainer listMessages(String username, String password, String topic, int partition,
-                                          int maxMessagesToReturn) throws KafkaException, ExecutionException, InterruptedException {
+                                          int maxMessagesToReturn, boolean hideOlderKeys) throws KafkaException, ExecutionException, InterruptedException {
         logger.debug("Get messages called");
         Map<String, List<PartitionInfo>> topics;
         MessageType keyType;
@@ -175,24 +176,34 @@ public class KafkaMessageService {
 
 
         List<Message> messages = new ArrayList<>();
-        //final int giveUp = 10;
+        Map<String, Message> messagesWithUniqueKey = new HashMap<>();
+        List<Message> finalMessages = new ArrayList<>();
         int attempts = 0;
+        boolean endReached = false;
+
+        if(endPosition-recentMessagesStartPosition>0)
         while (attempts<giveup ) {
-            logger.info("this is the messages size:"+messages.size());
-            if( messages.size()>=(endPosition-recentMessagesStartPosition))
+            //logger.info("this is the messages size:"+messages.size());
+            //if( messages.size()>=(endPosition-recentMessagesStartPosition))
+            if(endReached)
                 break;
             ConsumerRecords<Object, Object> consumerRecords =
                     consumer.poll(java.time.Duration.ofMillis(timeOut));
             attempts++;
             logger.debug("this is the attempt number:"+attempts);
             logger.debug("Got back records count:"+consumerRecords.count());
-            consumerRecords.forEach(record -> {
+
+            Iterator<ConsumerRecord<Object, Object>> itConsumerRecords = consumerRecords.iterator();
+            while(itConsumerRecords.hasNext()) {
+                ConsumerRecord<Object, Object> record = itConsumerRecords.next();
                 logger.debug("Consumer Record:(key, value, partition, offset):"+
                         record.key()+":"+ record.value()+":"+
                         record.partition()+":"+ record.offset());
                 String key=null;
                 String value = null;
                 List<String> headers = new ArrayList<>();
+
+
                 if(record.key()!=null)
                     key = record.key().toString();
                 if(record.value()!=null)
@@ -203,15 +214,26 @@ public class KafkaMessageService {
                         return sb.toString();
                     }).collect(Collectors.toList());
 
-
-                messages.add(new Message(key, value, record.partition(), record.offset(), headers, record.timestamp(), record.timestampType().toString()));
-            });
+                if(hideOlderKeys)
+                    messagesWithUniqueKey.put(key, new Message(key, value, record.partition(), record.offset(), headers, record.timestamp(), record.timestampType().toString()));
+                else
+                    messages.add(new Message(key, value, record.partition(), record.offset(), headers, record.timestamp(), record.timestampType().toString()));
+                if(record.offset()==(endPosition-1))
+                    endReached = true;
+            }
             //consumer.commitAsync();
         }
-
+        if(hideOlderKeys)
+            finalMessages = messagesWithUniqueKey.values().stream().collect(Collectors.toList());
+        else
+            finalMessages = messages;
         consumer.close();
-        Collections.reverse(messages);
-        return new MessagesContainer(false, messages);
+        if(!hideOlderKeys)
+            Collections.reverse(finalMessages);
+        else {
+            Collections.sort(finalMessages);
+        }
+        return new MessagesContainer(false, finalMessages);
 
     }
 }

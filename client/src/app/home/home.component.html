@@ -65,9 +65,9 @@
                         <button class="btn btn-outline-primary l-1 ml-1 col-sm-1" ngbPopover="Refresh" triggers="mouseenter:mouseleave" (click)="getMessages( )"><fa-icon [icon]="faSyncAlt" ></fa-icon></button>
                         <input type="search" class="form-control ds-input l-1 ml-1 col-sm-2" id="search-messages" placeholder="Search..." aria-label="Search for messages..." autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-owns="algolia-autocomplete-listbox-0" dir="auto" 
                              [(ngModel)]="messageSearch">
-                        <div class="form-check col-sm-1" style="margin-left: 1rem; margin-top: 0.5rem;">
-                                <input type="checkbox" id="hideold" class="form-check-input" [(ngModel)]="hideOldKeyMessages" (change)="getMessages( )"> 
-                                <label class="form-check-label" for="hideold">Hide Old Messages</label>     
+                        <div class="form-check col-sm-1" style="margin-left: 1rem; margin-top: 0.5rem;" ngbPopover="Hide older messages for same key. Typically useful for compacted topics" triggers="mouseenter:mouseleave">
+                                <input  type="checkbox" id="hideold" class="form-check-input" [(ngModel)]="hideOldKeyMessages" (change)="getMessages( )"> 
+                                <label class="form-check-label" for="hideold">Hide Old Keys</label>     
                         </div>
 
                 </div>

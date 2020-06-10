@@ -33,7 +33,7 @@ export class HomeComponent {
     topicError=null;
     messageError=null;
     hideOldKeyMessages=false;
-
+    JSON=JSON;
     constructor(private topicsService: TopicsService, private messageService:MessageService, private modalService: NgbModal, private route: ActivatedRoute,private router: Router) { this.JSON = JSON; }
 
     ngOnInit() {

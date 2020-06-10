@@ -34,7 +34,7 @@ export class HomeComponent {
     messageError=null;
     hideOldKeyMessages=false;
 
-    constructor(private topicsService: TopicsService, private messageService:MessageService, private modalService: NgbModal, private route: ActivatedRoute,private router: Router) { }
+    constructor(private topicsService: TopicsService, private messageService:MessageService, private modalService: NgbModal, private route: ActivatedRoute,private router: Router) { this.JSON = JSON; }
 
     ngOnInit() {
         this.route.queryParams.subscribe(params=>{

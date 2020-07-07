@@ -49,7 +49,7 @@ You can pass the path of the properties file as `USERS_PROPERTIES` environment v
 | UI_SSL_KEYSTORE_PASSWORD | Yes | Keystore password |
 | UI_SSL_REQUIRED | Yes | true or false. Whether SSL is required - Default true |
 
-### if you want to connect to LDAP use the following 
+### If you want to connect to LDAP use the following 
 | Environment Variable | Optional | Description |
 | --- | --- | --- |
 | ldap.enabled | Yes | Enable LDAP integration, default false |

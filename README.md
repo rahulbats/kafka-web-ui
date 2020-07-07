@@ -39,17 +39,9 @@ You can pass the path of the properties file as `USERS_PROPERTIES` environment v
 | SCHEMA_REGISTRY_URL | Yes | URL for schema registry |
 | SCHEMA_REGISTRY_BASIC_AUTH_USER_INFO | Yes | Schema registry auth username:password | 
 
+### Login through LDAP
+<b>Kafka Web UI</b> also supports loging in using LDAP/AD. The users should be part of LDAP groups with group names matching any of the SASL accounts in the `ALLOWED_USERS` or `USERS_PROPERTIES`. The SASL account should be in lower case, the code lowercases the group name before looking it up for the SASL account. Following are the environment variables you will need to enable this.
 
-### If you want the server to run on TLS use the following environment variables
-| Environment Variable | Optional | Description |
-| --- | --- | --- |
-| UI_SSL_ENABLED | Yes | true or false |
-| UI_SSL_TYPE | Yes | JKS or PKCS12 - default is JKS |
-| UI_SSL_KEYSTORE_LOCATION | Yes | Location of Keystore |
-| UI_SSL_KEYSTORE_PASSWORD | Yes | Keystore password |
-| UI_SSL_REQUIRED | Yes | true or false. Whether SSL is required - Default true |
-
-### If you want to connect to LDAP use the following 
 | Environment Variable | Optional | Description |
 | --- | --- | --- |
 | ldap.enabled | Yes | Enable LDAP integration, default false |
@@ -62,3 +54,14 @@ You can pass the path of the properties file as `USERS_PROPERTIES` environment v
 | ldap.group.basedn | Yes | Base DN for group search |
 | ldap.group.name.attribute | Yes | LDAP group name attribute, default value cn |
 | ldap.group.member.attribute| Yes | LDAP group member attribute, default value uniqueMember|
+
+### If you want the server to run on TLS use the following environment variables
+| Environment Variable | Optional | Description |
+| --- | --- | --- |
+| UI_SSL_ENABLED | Yes | true or false |
+| UI_SSL_TYPE | Yes | JKS or PKCS12 - default is JKS |
+| UI_SSL_KEYSTORE_LOCATION | Yes | Location of Keystore |
+| UI_SSL_KEYSTORE_PASSWORD | Yes | Keystore password |
+| UI_SSL_REQUIRED | Yes | true or false. Whether SSL is required - Default true |
+
+

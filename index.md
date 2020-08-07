@@ -2,6 +2,9 @@
 ### The only web UI for kafka messages which uses the SASL usersname/passwords directly as logins.
 This allows your team to view messages using SASL accounts and Admins to assign appropriate ACLs to them.
 
+## Overview
+Kafka Webui allows users to login through SASL accounts or LDAP accounts which are mapped to SASL accounts. This allows organizations to maintain confidentiality of messsage data using ACLs. For more information refer this [blog for using WEB UI using SASL logins](https://medium.com/@rahulbats/ui-for-kafka-which-uses-sasl-accounts-be68c1e348c0) and this [blog for using WEBUI using LDAP/AD logins](https://medium.com/@rahulbats/ui-for-kafka-part-2-with-ldap-f9ade38e7373).
+
 ## How to run
 ### Run as a docker container
 You can run this as a docker container `docker run  -e ALLOWED_USERS=[SASL USERS] -e SECURITY_PROTOCOL=[SECURITY PROTOCOL] -e BOOTSTRAP_SERVERS=[BOOTSTRAP SERVERS] -e SCHEMA_REGISTRY_URL=[OPTIONAL SCHEMA REGISTRY URL] -p 8080:8080 rahulbats/kafka-web-ui:[LATEST TAG]` 

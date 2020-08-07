@@ -23,6 +23,7 @@ You can pass the path of the properties file as `USERS_PROPERTIES` environment v
 
 ## List of environment variables
 ### Table below describes the environment variables. Refer the [application.properties file](server/src/main/resources/application.properties) on how these are used.
+
 | Environment Variable | Optional | Description |
 | --- | --- | --- |
 | ALLOWED_USERS | Yes | Optional String Containing SASL username:password seperated by comas for example `test:test123,previleged:previleged123` |
@@ -56,6 +57,7 @@ You can pass the path of the properties file as `USERS_PROPERTIES` environment v
 | ldap.group.member.attribute| Yes | LDAP group member attribute, default value uniqueMember|
 
 ### If you want the server to run on TLS use the following environment variables
+
 | Environment Variable | Optional | Description |
 | --- | --- | --- |
 | UI_SSL_ENABLED | Yes | true or false |

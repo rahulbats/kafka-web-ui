@@ -22,7 +22,8 @@ You can pass the path of the properties file as `USERS_PROPERTIES` environment v
 * Open a browser and go to `http://localhost:8080/api/ui/index.html`
 
 ## List of environment variables
-### Table below describes the environment variables. Refer the [application.properties file](server/src/main/resources/application.properties) on how these are used.
+### Table below describes the environment variables. 
+Refer the [application.properties file](server/src/main/resources/application.properties) on how these are used.
 
 | Environment Variable | Optional | Description |
 | --- | --- | --- |

@@ -108,6 +108,7 @@ export class HomeComponent {
       }
     deleteTopic(event, topicName:string) {
         this.loading= true;
+        this.topics = [];
         event.stopPropagation();
         this.topicsService.deleteTopic(topicName)
         .pipe(first())
@@ -129,7 +130,10 @@ export class HomeComponent {
             
           }, (reason) => {
             console.log(reason);
-            this.getTopics();
+            if(reason!='Cross click') {
+                this.getTopics();
+            }
+                
           });
     }
 

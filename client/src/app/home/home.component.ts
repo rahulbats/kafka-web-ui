@@ -106,7 +106,9 @@ export class HomeComponent {
             console.log(reason);
           });
       }
-    deleteTopic(topicName:string) {
+    deleteTopic(event, topicName:string) {
+        this.loading= true;
+        event.stopPropagation();
         this.topicsService.deleteTopic(topicName)
         .pipe(first())
         .subscribe(

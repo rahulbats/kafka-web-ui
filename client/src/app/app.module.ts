@@ -14,8 +14,9 @@ import { JwtInterceptor, ErrorInterceptor } from './_helpers';
 import { HomeComponent } from './home';
 import { LoginComponent } from './login';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { FormsModule } from '@angular/forms';;
-import { ModalContentComponent } from './modal-content/modal-content.component'
+import { FormsModule } from '@angular/forms';
+import { ModalContentComponent } from './modal-content/modal-content.component';
+import { CreateTopicComponent } from './create-topic/create-topic.component';
 @NgModule({
     imports: [
         BrowserModule,
@@ -30,7 +31,8 @@ import { ModalContentComponent } from './modal-content/modal-content.component'
         AppComponent,
         HomeComponent,
         LoginComponent,
-        ModalContentComponent    ],
+        ModalContentComponent ,
+        CreateTopicComponent   ],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
@@ -39,6 +41,6 @@ import { ModalContentComponent } from './modal-content/modal-content.component'
         //fakeBackendProvider
     ],
     bootstrap: [AppComponent],
-    entryComponents: [ ModalContentComponent ]
+    entryComponents: [ ModalContentComponent, CreateTopicComponent ]
 })
 export class AppModule { }

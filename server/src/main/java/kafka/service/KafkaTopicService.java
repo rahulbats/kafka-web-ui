@@ -3,15 +3,19 @@ package kafka.service;
 import kafka.model.Topic;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.kafka.clients.admin.CreateTopicsResult;
+import org.apache.kafka.clients.admin.DeleteTopicsResult;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.PartitionInfo;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.apache.kafka.clients.admin.AdminClient;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,9 +50,7 @@ public class KafkaTopicService {
     @Value("${sasl.mechanism}")
     private String saslMechanism;
 
-    public List<Topic> listTopics(String username, String password) throws KafkaException{
-        Map<String, List<PartitionInfo>> topics;
-
+    private Properties buildProps(String username, String password) {
         String jaasString = saslMechanism.equals("PLAIN")?
                 "org.apache.kafka.common.security.plain.PlainLoginModule required  username=\""+username+"\"  password=\""+password+"\";":
                 "org.apache.kafka.common.security.scram.ScramLoginModule required  username=\""+username+"\"  password=\""+password+"\";";
@@ -75,11 +77,43 @@ public class KafkaTopicService {
             props.put("ssl.key.password", keyPassword.trim());
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        return props;
 
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(props);
+    }
+
+
+    public List<Topic> listTopics(String username, String password) throws KafkaException{
+        Map<String, List<PartitionInfo>> topics;
+
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(buildProps(username, password));
         topics = consumer.listTopics();
         consumer.close();
         return topics.keySet().stream().map(topicName-> new Topic(topicName, topics.get(topicName).size())).collect(Collectors.toList());
+
+    }
+
+    public void createTopics(String username, String password, Topic topic) throws KafkaException, InterruptedException, ExecutionException {
+       AdminClient adminClient =  AdminClient.create(buildProps(username, password));
+       List<NewTopic> topics = new ArrayList<>();
+       NewTopic newTopic = new NewTopic(topic.getName(), Optional.of(topic.getPartitionCount()), Optional.empty());
+       Map<String, String> configs = new HashMap<>();
+       if(topic.isCompacted())
+         configs.put("cleanup.policy","compact");
+       newTopic.configs(configs);
+       topics.add(newTopic);
+
+       CreateTopicsResult result = adminClient.createTopics(topics);
+       result.all().get();
+
+    }
+
+    public void deleteTopic(String username, String password, String topicName) throws KafkaException, InterruptedException, ExecutionException {
+        AdminClient adminClient =  AdminClient.create(buildProps(username, password));
+        List<String> topics = new ArrayList<>();
+        topics.add(topicName);
+
+        DeleteTopicsResult result = adminClient.deleteTopics(topics);
+        result.all().get();
 
     }
 }

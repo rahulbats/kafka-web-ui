@@ -1,0 +1,32 @@
+
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Create Topic</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div *ngIf="loading" class="d-flex align-items-center" style="padding: 20px;">
+      <strong>Loading...</strong>
+      <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+    </div>
+    <div *ngIf="topicError && !loading" style="padding: 5px;" class="alert alert-danger" role="alert">{{topicError}}</div>
+<form [formGroup]="topicForm" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <label for="topicName">Topic Name</label>
+    <input type="text" formControlName="topicName" class="form-control" id="topicName" aria-describedby="topicName" placeholder="Enter topic name">
+    <small id="topicNameText" class="form-text text-muted">Name of the topic.</small>
+  </div>
+  <div class="form-group">
+    <label for="numberPartitions">Number of Partitions</label>
+    <input type="number" formControlName="partitions" class="form-control" id="numberPartitions" placeholder="Number of Partitions">
+    <small id="partitionsText" class="form-text text-muted">Number of partitions for topic.</small>
+  </div>
+  <div class="form-group form-check">
+    <input type="checkbox" formControlName="compacted" class="form-check-input" id="compacted">
+    <label class="form-check-label" for="compacted">Compacted</label>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+</div>
+

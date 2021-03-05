@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.naming.NamingException;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -53,4 +53,42 @@ public class TopicsController {
         return kafkaTopicService.listTopics(username, usersBean.getPassword(username));
     }
 
+    @PostMapping(path ="/topics", produces = "application/json")
+    public void createTopic(@RequestBody Topic topic) throws NamingException, InterruptedException, ExecutionException {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails)principal).getUsername();
+        if(ldapEnabled) {
+            Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>) ((UserDetails)principal).getAuthorities();
+            List<String> usernames = usersBean.getMappedSASLUser(authorities.stream().map(authority->authority).collect(Collectors.toList()));
+
+            boolean topicCreated = false;
+            ExecutionException exception = null;
+            for(String adGroupname: usernames) {
+               try{
+                   kafkaTopicService.createTopics(adGroupname, usersBean.getPassword(adGroupname), topic);
+               } catch (ExecutionException ex) {
+                   exception = ex;
+                   continue;
+               }
+               topicCreated = true;
+               break;
+
+            }
+            if(!topicCreated){
+                throw exception;
+            }
+
+
+            //return topicCreated;
+        }
+
+        kafkaTopicService.createTopics(username, usersBean.getPassword(username), topic);
+    }
+
+    @DeleteMapping(path ="/topics/{topicName}", produces = "application/json")
+    public void deleteTopic(@PathVariable String topicName) throws NamingException, InterruptedException, ExecutionException {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails)principal).getUsername();
+        kafkaTopicService.deleteTopic(username, usersBean.getPassword(username), topicName);
+    }
 }

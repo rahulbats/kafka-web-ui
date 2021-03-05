@@ -29,12 +29,12 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-web:+")
     compile("org.springframework.boot:spring-boot-starter-security")
     compile("org.springframework.ldap:spring-ldap-core")
     compile("org.springframework.security:spring-security-ldap")
     compile("io.jsonwebtoken:jjwt:0.9.1")
-    compile group: 'org.apache.kafka', name: 'kafka-clients', version: '2.3.1'
+    compile group: 'org.apache.kafka', name: 'kafka-clients', version: '2.7.0'
     compile 'io.confluent:kafka-avro-serializer:5.2.2'
     compile group: 'org.apache.avro', name: 'avro', version: '1.9.1'
     compile 'org.slf4j:slf4j-log4j12:2.0.0-alpha0'

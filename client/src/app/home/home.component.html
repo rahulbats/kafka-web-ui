@@ -3,9 +3,10 @@
 <div class="card mt-1 l-1 col-3" style="padding: 0 0">
     <div    class="card-header">
         <div class="row" style="margin-bottom: 5px;">
-                <h5 class="primary col-6" style="padding-left: 0;">Topic List</h5>
+                <h5 class="primary col-5" style="padding-left: 0;">Topic List</h5>
                 <button class="btn btn-outline-primary col-2" *ngIf="acc.activeIds.length>0" (click)="acc.activeIds=[]" ngbPopover="Collapse All" triggers="mouseenter:mouseleave"><fa-icon  [icon]="faMinus" ></fa-icon></button>
                 <button class="btn btn-outline-primary l-1 ml-1 col-2" ngbPopover="Refresh" triggers="mouseenter:mouseleave" (click)="getTopics()"><fa-icon [icon]="faSyncAlt" ></fa-icon></button>
+                <button class="btn btn-outline-primary l-1 ml-1 col-2" ngbPopover="Create Topic" triggers="mouseenter:mouseleave" (click)="openCreateTopic()" ><fa-icon [icon]="faPlus" ></fa-icon></button>
                    
         </div>
         <div class="row">
@@ -23,9 +24,10 @@
             <ngb-panel id="{{topic.name}}" *ngFor="let topic of topicSearchAction()" [type]="currentTopic==topic.name?'info':''">
                 <ng-template ngbPanelTitle >
                         <div class="topic-name row">
-                                        <span style="float:left" class="col-10" style="text-align: left;">{{topic.name}}</span>
-                                        <fa-icon class="col-1" [icon]="faPlus" *ngIf="!acc.activeIds.includes(topic.name)"  style="text-align: right;"></fa-icon>
-                                        <fa-icon class="col-1" [icon]="faMinus" *ngIf="acc.activeIds.includes(topic.name)"  style="text-align: right;"></fa-icon>
+                                <button class="btn btn-outline-primary l-1 ml-1 col-2" ngbPopover="Delete Topic" placement="right" triggers="mouseenter:mouseleave" (click)="deleteTopic(topic.name);event.stopPropagation();" ><fa-icon [icon]="faTrash" ></fa-icon></button>
+                                        <span style="float:left" class="col-7" style="text-align: left;">{{topic.name}}</span>
+                                        <fa-icon class="col-1" [icon]="faChevronDown" *ngIf="!acc.activeIds.includes(topic.name)"  style="text-align: right;"></fa-icon>
+                                        <fa-icon class="col-1" [icon]="faChevronUp" *ngIf="acc.activeIds.includes(topic.name)"  style="text-align: right;"></fa-icon>
                                               
                         </div>
                             

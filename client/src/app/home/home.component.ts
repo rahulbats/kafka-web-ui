@@ -4,10 +4,12 @@ import { first } from 'rxjs/operators';
 import { Topic, Message } from '@app/_models';
 import { TopicsService, AuthenticationService } from '@app/_services';
 import { MessageService } from '@app/_services/message.service';
-import { faEllipsisH, faSyncAlt , faPlus, faMinus} from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisH, faSyncAlt , faPlus, faMinus, faChevronDown, faChevronUp, faTrash} from '@fortawesome/free-solid-svg-icons';
 import {NgbModal, ModalDismissReasons, NgbModalRef, NgbPanelChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import { ModalContentComponent } from '../modal-content/modal-content.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CreateTopicComponent } from '@app/create-topic/create-topic.component';
+
 
 @Component({ templateUrl: 'home.component.html' })
 export class HomeComponent {
@@ -17,6 +19,9 @@ export class HomeComponent {
     faSyncAlt = faSyncAlt;
     faPlus = faPlus;
     faMinus = faMinus;
+    faTrash = faTrash;
+    faChevronDown = faChevronDown;
+    faChevronUp = faChevronUp;
     closeResult: string;
     topics: Topic[];
     currentTopic: string='';
@@ -36,6 +41,7 @@ export class HomeComponent {
     JSON=JSON;
     constructor(private topicsService: TopicsService, private messageService:MessageService, private modalService: NgbModal, private route: ActivatedRoute,private router: Router) { this.JSON = JSON; }
 
+
     ngOnInit() {
         this.route.queryParams.subscribe(params=>{
             this.currentTopic = params['topic'];
@@ -46,6 +52,8 @@ export class HomeComponent {
         })
         this.getTopics();
     }
+    
+    
     getTopics(){
         this.topicError=null;
         this.loading = true;
@@ -98,6 +106,31 @@ export class HomeComponent {
             console.log(reason);
           });
       }
+    deleteTopic(topicName:string) {
+        this.topicsService.deleteTopic(topicName)
+        .pipe(first())
+        .subscribe(
+            result => {
+                this.getTopics();
+            },
+            error=> {
+                this.topicError=error;
+            }
+            );
+    }  
+    openCreateTopic() {
+        const modalRef: NgbModalRef  = this.modalService.open(CreateTopicComponent);
+        //modalRef.componentInstance.data=value;
+        //modalRef.componentInstance.type=type;
+        modalRef.result.then((result) => {
+            console.log(result);
+            
+          }, (reason) => {
+            console.log(reason);
+            this.getTopics();
+          });
+    }
+
     topicSearchAction(){
        return this.topicSearch.length>0?this.topics.filter(topic=>topic.name.indexOf(this.topicSearch)>=0):this.topics;
     }

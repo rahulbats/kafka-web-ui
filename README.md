@@ -44,17 +44,18 @@ You can pass the path of the properties file as `USERS_PROPERTIES` environment v
 
 | Environment Variable | Optional | Description |
 | --- | --- | --- |
-| ldap.enabled | Yes | Enable LDAP integration, default false |
-| ldap.role.prefix | Yes | LDAP group prefix |
-| ldap.url | Yes | LDAP url |
-| ldap.bind.dn| Yes | LDAP bind DN |
-| ldap.bind.password | Yes | LDAP bind password |
-| ldap.user.basedn | Yes | LDAP base DN to do user search |
-| ldap.user.id.attribute | Yes | User id attribute, default uid |
-| ldap.group.basedn | Yes | Base DN for group search |
-| ldap.group.name.attribute | Yes | LDAP group name attribute, default value cn |
-| ldap.group.member.attribute| Yes | LDAP group member attribute, default value uniqueMember|
-
+| LDAP_ENABLED | Yes | Enable LDAP integration, default false |
+| LDAP_ROLE_PREFIX | Yes | LDAP group prefix |
+| LDAP_URL | Yes | LDAP url |
+| LDAP_BIND_DN| Yes | LDAP bind DN |
+| LDAP_BIND_PASSWORD | Yes | LDAP bind password |
+| LDAP_USER_BASEDN | Yes | LDAP base DN to do user search |
+| LDAP_USER_ID_ATTRIBUTE | Yes | User id attribute, default uid |
+| LDAP_GROUP_BASEDN | Yes | Base DN for group search |
+| LDAP_GROUP_NAME_ATTRIBUTE | Yes | LDAP group name attribute, default value cn |
+| LDAP_GROUP_MEMBER_ATTRIBUTE| Yes | LDAP group member attribute, default value uniqueMember|
+| LDAP_GROUP_UPPERCASE | Yes | Convert LDAP groups to uppercase |
+| LDAP_GROUP_LOWERCASE | Yes | Convert LDAP groups to lowercase |
 ### If you want the server to run on TLS use the following environment variables
 | Environment Variable | Optional | Description |
 | --- | --- | --- |

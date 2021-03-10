@@ -4,7 +4,7 @@ import { first } from 'rxjs/operators';
 import { Topic, Message } from '@app/_models';
 import { TopicsService, AuthenticationService } from '@app/_services';
 import { MessageService } from '@app/_services/message.service';
-import { faEllipsisH, faSyncAlt , faPlus, faMinus, faChevronDown, faChevronUp, faTrash} from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisH, faSyncAlt , faPlus, faMinus, faChevronDown, faChevronUp, faTrashAlt} from '@fortawesome/free-solid-svg-icons';
 import {NgbModal, ModalDismissReasons, NgbModalRef, NgbPanelChangeEvent} from '@ng-bootstrap/ng-bootstrap';
 import { ModalContentComponent } from '../modal-content/modal-content.component';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -19,7 +19,7 @@ export class HomeComponent {
     faSyncAlt = faSyncAlt;
     faPlus = faPlus;
     faMinus = faMinus;
-    faTrash = faTrash;
+    faTrash = faTrashAlt;
     faChevronDown = faChevronDown;
     faChevronUp = faChevronUp;
     closeResult: string;

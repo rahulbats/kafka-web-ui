@@ -62,6 +62,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private String ldapGroupMemberAttribute;
 
 
+    @Value("${ldap.group.uppercase}")
+    private boolean ldapGroupUpperCase;
+
+
+    @Value("${ldap.group.lowercase}")
+    private boolean ldapGroupLowerCase;
 
 
     @Autowired
@@ -106,8 +112,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             super.configure(auth);
         else {
             SimpleAuthorityMapper simpleAuthorityMapper = new SimpleAuthorityMapper();
-            simpleAuthorityMapper.setConvertToUpperCase(false);
-            simpleAuthorityMapper.setConvertToLowerCase(true);
+            simpleAuthorityMapper.setConvertToUpperCase(ldapGroupUpperCase);
+            simpleAuthorityMapper.setConvertToLowerCase(ldapGroupLowerCase);
             simpleAuthorityMapper.setPrefix("");
             auth
                     .ldapAuthentication()

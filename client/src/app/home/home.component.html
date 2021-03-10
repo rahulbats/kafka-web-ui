@@ -24,10 +24,10 @@
             <ngb-panel id="{{topic.name}}" *ngFor="let topic of topicSearchAction()" [type]="currentTopic==topic.name?'info':''">
                 <ng-template ngbPanelTitle >
                         <div class="topic-name row">
-                                <button class="btn btn-outline-primary l-1 ml-1 col-2" ngbPopover="Delete Topic" placement="right" triggers="mouseenter:mouseleave" (click)="deleteTopic($event, topic.name)" ><fa-icon [icon]="faTrash" ></fa-icon></button>
-                                        <span style="float:left" class="col-7" style="text-align: left;">{{topic.name}}</span>
-                                        <fa-icon class="col-1" [icon]="faChevronDown" *ngIf="!acc.activeIds.includes(topic.name)"  style="text-align: right;"></fa-icon>
-                                        <fa-icon class="col-1" [icon]="faChevronUp" *ngIf="acc.activeIds.includes(topic.name)"  style="text-align: right;"></fa-icon>
+                                <button class="btn btn-outline-danger l-1 ml-1 col-2" ngbPopover="Delete Topic" placement="right" triggers="mouseenter:mouseleave" (click)="deleteTopic($event, topic.name)" ><fa-icon [icon]="faTrash" ></fa-icon></button>
+                                        <span style="float:left" class="col-7"  style="text-align: left;margin-top: 5px;">{{topic.name}}</span>
+                                        <fa-icon class="col-1" [icon]="faChevronDown" *ngIf="!acc.activeIds.includes(topic.name)"  style="text-align: right;padding-top: 5px;"></fa-icon>
+                                        <fa-icon class="col-1" [icon]="faChevronUp" *ngIf="acc.activeIds.includes(topic.name)"  style="text-align: right;padding-top: 5px;"></fa-icon>
                                               
                         </div>
                             

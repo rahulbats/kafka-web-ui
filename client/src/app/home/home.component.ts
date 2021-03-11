@@ -108,16 +108,18 @@ export class HomeComponent {
       }
     deleteTopic(event, topicName:string) {
         this.loading= true;
-        this.topics = [];
+        
         event.stopPropagation();
         this.topicsService.deleteTopic(topicName)
         .pipe(first())
         .subscribe(
             result => {
+                this.topics = [];
                 this.getTopics();
             },
             error=> {
                 this.topicError=error;
+                this.loading=false;
             }
             );
     }  

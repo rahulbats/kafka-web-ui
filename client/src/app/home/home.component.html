@@ -4,7 +4,7 @@
     <div    class="card-header">
         <div class="row" style="margin-bottom: 5px;">
                 <h5 class="primary col-5" style="padding-left: 0;">Topic List</h5>
-                <button class="btn btn-outline-primary col-2" *ngIf="acc.activeIds.length>0" (click)="acc.activeIds=[]" ngbPopover="Collapse All" triggers="mouseenter:mouseleave"><fa-icon  [icon]="faMinus" ></fa-icon></button>
+                <button class="btn btn-outline-primary col-2" *ngIf="acc.activeIds.length>0" (click)="acc.activeIds=[]" ngbPopover="Collapse All" triggers="mouseenter:mouseleave"><fa-icon  [icon]="faChevronUp" ></fa-icon></button>
                 <button class="btn btn-outline-primary l-1 ml-1 col-2" ngbPopover="Refresh" triggers="mouseenter:mouseleave" (click)="getTopics()"><fa-icon [icon]="faSyncAlt" ></fa-icon></button>
                 <button class="btn btn-outline-primary l-1 ml-1 col-2" ngbPopover="Create Topic" triggers="mouseenter:mouseleave" (click)="openCreateTopic()" ><fa-icon [icon]="faPlus" ></fa-icon></button>
                    
@@ -19,6 +19,9 @@
           </div>
     <div *ngIf="topicError" class="alert alert-danger" role="alert">
                 {{topicError}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="topicError=null">
+                        <span aria-hidden="true">&times;</span>
+                </button>
     </div>      
     <ngb-accordion #acc="ngbAccordion"  >
             <ngb-panel id="{{topic.name}}" *ngFor="let topic of topicSearchAction()" [type]="currentTopic==topic.name?'info':''">
@@ -56,18 +59,23 @@
        
                 
                 <div class="form-group row">
-                        <label for="maxMessages" class="col-sm-2 mt-0 l-0 col-form-label">Max Messages</label>
-                        <div class="col-sm-2">
-                                <input class="form-control" type="number" id="maxMessages"
+                         <div class="col-sm-5 form-group row">
+                                <label for="maxMessages" class="col-sm-4 col-form-label">Max Messages</label>
+                       
+                                <input class="col-sm-6 form-control" type="number" id="maxMessages"
                                     [(ngModel)]="maxMessages"/>
                         </div>
-                        <button class="btn btn-primary l-1 mr-1 col-sm-1" *ngIf="maxMessages!=originalMaxMessages" (click)="originalMaxMessages=maxMessages;getMessages( )">Set</button>
-                        <button class="btn btn-outline-secondary l-1 mr-1 col-sm-1" *ngIf="maxMessages!=originalMaxMessages" (click)="maxMessages=originalMaxMessages">Reset</button>
+                        <div class="col-sm-3 form-group row" id="refresh-holder">
+                                <button class="btn btn-primary l-1 mr-1 col-sm-3" ngbPopover="Set Max Messages to {{maxMessages}}" triggers="mouseenter:mouseleave" *ngIf="maxMessages!=originalMaxMessages" (click)="originalMaxMessages=maxMessages;getMessages( )">Set</button>
                         
-                        <button class="btn btn-outline-primary l-1 ml-1 col-sm-1" ngbPopover="Refresh" triggers="mouseenter:mouseleave" (click)="getMessages( )"><fa-icon [icon]="faSyncAlt" ></fa-icon></button>
+                                <button class="btn btn-secondary l-1 mr-1 col-sm-3" ngbPopover="Reset Max Messages to {{originalMaxMessages}}" triggers="mouseenter:mouseleave" *ngIf="maxMessages!=originalMaxMessages" (click)="maxMessages=originalMaxMessages">Reset</button>
+                                <button class="btn btn-primary l-1 ml-1 col-sm-3" ngbPopover="Refresh Messages" triggers="mouseenter:mouseleave" (click)="getMessages( )"><fa-icon [icon]="faSyncAlt" ></fa-icon></button>            
+                        </div>        
+                        
+                        
                         <input type="search" class="form-control ds-input l-1 ml-1 col-sm-2" id="search-messages" placeholder="Search..." aria-label="Search for messages..." autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-owns="algolia-autocomplete-listbox-0" dir="auto" 
                              [(ngModel)]="messageSearch">
-                        <div class="form-check col-sm-1" style="margin-left: 1rem; margin-top: 0.5rem;" ngbPopover="Hide older messages for same key. Typically useful for compacted topics" triggers="mouseenter:mouseleave">
+                        <div class="form-check col-sm-2" style="margin-left: 1rem; margin-top: 0.5rem;" ngbPopover="Hide older messages for same key. Typically useful for compacted topics" triggers="mouseenter:mouseleave">
                                 <input  type="checkbox" id="hideold" class="form-check-input" [(ngModel)]="hideOldKeyMessages" (change)="getMessages( )"> 
                                 <label class="form-check-label" for="hideold">Hide Old Keys</label>     
                         </div>

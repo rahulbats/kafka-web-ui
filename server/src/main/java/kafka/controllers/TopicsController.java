@@ -61,7 +61,6 @@ public class TopicsController {
             Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>) ((UserDetails)principal).getAuthorities();
             List<String> usernames = usersBean.getMappedSASLUser(authorities.stream().map(authority->authority).collect(Collectors.toList()));
 
-            boolean topicCreated = false;
             ExecutionException exception = null;
             for(String adGroupname: usernames) {
                try{
@@ -70,16 +69,12 @@ public class TopicsController {
                    exception = ex;
                    continue;
                }
-               topicCreated = true;
-               break;
+               return;
 
             }
-            if(!topicCreated){
-                throw exception;
-            }
+            throw exception;
 
 
-            //return topicCreated;
         }
 
         kafkaTopicService.createTopics(username, usersBean.getPassword(username), topic);
@@ -89,6 +84,25 @@ public class TopicsController {
     public void deleteTopic(@PathVariable String topicName) throws NamingException, InterruptedException, ExecutionException {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails)principal).getUsername();
+        if(ldapEnabled) {
+            Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>) ((UserDetails)principal).getAuthorities();
+            List<String> usernames = usersBean.getMappedSASLUser(authorities.stream().map(authority->authority).collect(Collectors.toList()));
+
+            ExecutionException exception = null;
+            for(String adGroupname: usernames) {
+                try{
+                    kafkaTopicService.deleteTopic(adGroupname, usersBean.getPassword(adGroupname), topicName);
+                } catch (ExecutionException ex) {
+                    exception = ex;
+                    continue;
+                }
+                return;
+
+            }
+            throw exception;
+
+        }
+
         kafkaTopicService.deleteTopic(username, usersBean.getPassword(username), topicName);
     }
 }
